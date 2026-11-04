@@ -1,0 +1,48 @@
+# 앱 빌드. 공개 저장소라 GitHub의 Linux·macOS 러너가 무료.
+# 결과물은 Actions 탭 > 해당 실행 > Artifacts 에서 받음.
+#   app-debug.apk  → 안드로이드 폰에 바로 설치 가능
+#   App.ipa (미서명) → Sideloadly 같은 도구로 본인 아이폰에 설치 (Mac 불필요)
+name: build
+on:
+  push:
+    branches: [main, "feat/**"]
+  workflow_dispatch:
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 21 }
+      - run: npm ci
+      - run: npm run sync
+      - run: chmod +x android/gradlew && cd android && ./gradlew assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-debug.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+  ios:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run sync
+      # 서명 없이 빌드. Apple 개발자 계정이 생기면 서명 단계를 추가해 TestFlight로 올릴 수 있음.
+      - run: |
+          cd ios/App
+          xcodebuild -project App.xcodeproj -scheme App -configuration Release -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO \
+            -skipPackagePluginValidation build
+          mkdir -p Payload && cp -R build/Build/Products/Release-iphoneos/App.app Payload/
+          zip -qr App.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: App-unsigned.ipa
+          path: ios/App/App.ipa

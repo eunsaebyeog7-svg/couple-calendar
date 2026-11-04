@@ -1,0 +1,19 @@
+{
+  "name": "couple-calendar",
+  "private": true,
+  "scripts": {
+    "vendor": "node -e \"const f=require('fs');f.copyFileSync('node_modules/@capacitor/core/dist/capacitor.js','docs/vendor/capacitor.js');f.copyFileSync('node_modules/@supabase/supabase-js/dist/umd/supabase.js','docs/vendor/supabase.js')\"",
+    "sync": "npm run vendor && cap sync",
+    "android": "npm run sync && cap open android",
+    "ios": "npm run sync && cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/browser": "^8.0.5",
+    "@capacitor/cli": "^8.6.0",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/ios": "^8.6.0",
+    "@supabase/supabase-js": "^2.119.0"
+  }
+}
