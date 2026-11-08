@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f7a8c">
+<title>우리 캘린더</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: phone-width app column with bottom tab bar; fills the screen on phones. Two people = two hues, overlap = their blend */
+:root{
+  --bg:#eef1f6; --surface:#ffffff; --fg:#1d2433; --muted:#6b7488; --line:#dde2ec;
+  --me:#1f7a8c; --me-soft:#dcf0f3; --you:#c2416b; --you-soft:#f8e1e9; --both:#6d4fb3; --both-soft:#ece6f8;
+  --anniv:#d9900f; --anniv-soft:#fbefd6; --free:#2f9e44; --danger:#c92a2a;
+  --apple-bg:#000; --apple-fg:#fff; --google-bg:#fff; --google-fg:#1f1f1f; --google-line:#747775;
+  --display:"Do Hyeon","IBM Plex Sans KR",system-ui,sans-serif;
+  --body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --sat:var(--safe-area-inset-top,env(safe-area-inset-top,0px)); --sab:var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px));
+  --sal:var(--safe-area-inset-left,env(safe-area-inset-left,0px)); --sar:var(--safe-area-inset-right,env(safe-area-inset-right,0px));
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12151c; --surface:#1b2029; --fg:#e8ebf2; --muted:#9aa3b5; --line:#2b3240;
+  --me:#4fb3c6; --me-soft:#173a42; --you:#e9779c; --you-soft:#45202e; --both:#a78bea; --both-soft:#2e2647;
+  --anniv:#f0b545; --anniv-soft:#3d2f14; --free:#5cc46f; --danger:#ff6b6b;
+  --apple-bg:#fff; --apple-fg:#000; --google-bg:#131314; --google-fg:#e3e3e3; --google-line:#8e918f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12151c; --surface:#1b2029; --fg:#e8ebf2; --muted:#9aa3b5; --line:#2b3240;
+  --me:#4fb3c6; --me-soft:#173a42; --you:#e9779c; --you-soft:#45202e; --both:#a78bea; --both-soft:#2e2647;
+  --anniv:#f0b545; --anniv-soft:#3d2f14; --free:#5cc46f; --danger:#ff6b6b;
+  --apple-bg:#fff; --apple-fg:#000; --google-bg:#131314; --google-fg:#e3e3e3; --google-line:#8e918f; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;-webkit-tap-highlight-color:transparent;
+  padding-left:max(16px,var(--sal));padding-right:max(16px,var(--sar));padding-block:20px}
+.app{max-width:400px;margin:0 auto;background:var(--surface);border-radius:28px;border:1px solid var(--line);
+  overflow:hidden;display:flex;flex-direction:column;min-height:720px}
+@media (max-width:500px){ body{padding:0} .app{max-width:none;min-height:100%;border:0;border-radius:0} }
+#shell{flex:1;display:flex;flex-direction:column}
+header{padding:calc(16px + var(--sat)) max(20px,var(--sar)) 8px max(20px,var(--sal));display:flex;justify-content:space-between;align-items:center;gap:8px}
+h1{font-family:var(--display);font-weight:400;font-size:26px;margin:0}
+.pair{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.av{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700}
+.av.me{background:var(--me)} .av.you{background:var(--you);margin-left:-10px;border:2px solid var(--surface)}
+main{flex:1;padding:8px 20px 20px;display:flex;flex-direction:column;gap:14px}
+nav{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);padding-bottom:var(--sab)}
+nav button{background:none;border:0;padding:12px 0 14px;font:inherit;font-size:12px;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}
+nav button[aria-current="true"]{color:var(--fg);font-weight:700}
+nav svg{width:22px;height:22px}
+button:focus-visible,input:focus-visible,select:focus-visible,label:focus-within,a:focus-visible{outline:2px solid var(--both);outline-offset:2px}
+a{color:var(--both)}
+input[type=text],input[type=date],input[type=time]{font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0;width:100%}
+input[type=checkbox]{accent-color:var(--both);width:20px;height:20px;margin:0}
+.muted{color:var(--muted)}
+
+/* 로그인 */
+#login{flex:1;display:flex;flex-direction:column;justify-content:center;gap:28px;padding:calc(32px + var(--sat)) 28px calc(28px + var(--sab))}
+.brand{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.brand .mark{display:flex}
+.brand .av{width:56px;height:56px;font-size:22px}
+.brand .av.you{margin-left:-16px;border-width:3px}
+.brand h1{font-size:34px}
+.brand p{margin:0;color:var(--muted);line-height:1.6}
+.sso{display:flex;flex-direction:column;gap:10px}
+.sso button{height:50px;border-radius:12px;font:inherit;font-size:16px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;border:0}
+.sso svg{width:20px;height:20px;flex:none}
+.apple{background:var(--apple-bg);color:var(--apple-fg)}
+.kakao{background:#FEE500;color:rgba(0,0,0,.85)}
+.google{background:var(--google-bg);color:var(--google-fg);border:1px solid var(--google-line)!important}
+.fine{font-size:12px;color:var(--muted);text-align:center;line-height:1.6;margin:0}
+.demo{background:none;border:1px dashed var(--line);color:var(--muted);border-radius:12px;padding:12px;font:inherit;font-size:13px;cursor:pointer}
+
+/* 위젯 카드 */
+.widget{background:var(--bg);border-radius:18px;padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:start}
+.widget h2{grid-column:1/-1;font-family:var(--display);font-weight:400;font-size:18px;margin:0}
+.widget .wph{grid-row:2/span 3;width:64px;height:64px;object-fit:cover;border-radius:12px}
+.wrow{display:flex;align-items:center;gap:8px;font-size:14px;min-width:0}
+.wrow time{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.wrow b{color:var(--anniv)}
+.wrow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.month{display:flex;justify-content:space-between;align-items:center}
+.month b{font-family:var(--display);font-weight:400;font-size:22px}
+.month button{background:none;border:1px solid var(--line);color:var(--fg);border-radius:10px;width:34px;height:34px;cursor:pointer;font-size:16px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:none;color:var(--fg);border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--surface);border-color:var(--fg)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+.wd{font-size:11px;color:var(--muted);padding:4px 0;letter-spacing:.04em}
+.wd:first-child{color:var(--you)}
+.day{background:none;border:0;color:var(--fg);font:inherit;font-size:14px;aspect-ratio:1/1.1;border-radius:12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:6px 0 0;gap:3px;font-variant-numeric:tabular-nums;position:relative}
+.day.out{visibility:hidden}
+.day.sel{background:var(--both-soft)}
+.day.today span:first-child{background:var(--fg);color:var(--surface);border-radius:50%;width:24px;height:24px;display:grid;place-items:center}
+.day.free::after{content:"";position:absolute;inset:3px;border:1.5px dashed var(--free);border-radius:10px;pointer-events:none}
+.dots{display:flex;gap:3px;height:8px}
+.day .pth{width:16px;height:16px;object-fit:cover;border-radius:4px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend .fb{width:12px;height:12px;border:1.5px dashed var(--free);border-radius:4px}
+.list{display:flex;flex-direction:column;gap:8px}
+.list h2,.sec h2{font-size:14px;margin:4px 0 0;color:var(--muted);font-weight:500;display:flex;justify-content:space-between;align-items:center}
+.small{background:none;border:1px solid var(--line);color:var(--fg);border-radius:999px;padding:4px 10px;font:inherit;font-size:12px;cursor:pointer}
+.ev{display:grid;grid-template-columns:52px 1fr auto auto;gap:8px;align-items:center;padding:10px 12px;border-radius:14px}
+.ev.me{background:var(--me-soft)} .ev.you{background:var(--you-soft)} .ev.both{background:var(--both-soft)} .ev.anniv{background:var(--anniv-soft)}
+.ev time,.ev .dd{font-size:13px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.ev .dd{color:var(--anniv);font-weight:700}
+.ev .who{font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;color:#fff}
+.who.me{background:var(--me)} .who.you{background:var(--you)} .who.both{background:var(--both)} .who.anniv{background:var(--anniv)}
+.ev span:nth-child(2){min-width:0;overflow-wrap:anywhere}
+.x{background:none;border:0;color:var(--muted);font-size:18px;line-height:1;cursor:pointer;padding:4px;width:28px}
+.empty{color:var(--muted);font-size:13px;padding:12px;border:1px dashed var(--line);border-radius:14px;text-align:center}
+.form{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--line);border-radius:14px}
+.row{display:flex;gap:8px} .row>*{flex:1;min-width:0}
+.photo{position:relative;border-radius:16px;overflow:hidden}
+.photo img{display:block;width:100%;max-height:260px;object-fit:cover}
+.photo .x{position:absolute;top:8px;right:8px;background:var(--fg);color:var(--surface);border-radius:50%;width:30px;height:30px}
+
+.seg{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--bg);border-radius:12px;padding:4px}
+.seg button{border:0;background:none;padding:10px;border-radius:9px;font:inherit;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg);font-weight:700}
+.drop{border:2px dashed var(--line);border-radius:18px;padding:22px;text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center;color:var(--muted)}
+.drop strong{color:var(--fg)}
+.drop img{border-radius:12px;max-height:200px;max-width:100%;object-fit:contain}
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pick label,.filebtn{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center;cursor:pointer;font-size:14px;display:block}
+.pick input,.filebtn input{position:absolute;opacity:0;width:1px;height:1px}
+.sample{background:none;border:0;color:var(--both);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer;align-self:center}
+.cta{background:var(--fg);color:var(--surface);border:0;border-radius:14px;padding:14px;font:inherit;font-weight:700;cursor:pointer}
+.cta:disabled{opacity:.4;cursor:default}
+.ghost{background:none;color:var(--fg);border:1px solid var(--line);border-radius:14px;padding:12px;font:inherit;cursor:pointer}
+.danger{background:none;border:0;color:var(--danger);font:inherit;font-size:14px;cursor:pointer;padding:8px;text-decoration:underline}
+.danger.solid{background:var(--danger);color:#fff;text-decoration:none;border-radius:14px;padding:12px;font-weight:700}
+.parsed{display:flex;flex-direction:column;gap:6px}
+.parsed label,.sw{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px;font-size:14px}
+.sw{grid-template-columns:1fr auto;cursor:pointer}
+.parsed small,.sw small{display:block;color:var(--muted);font-size:12px}
+.note{font-size:12px;color:var(--muted);line-height:1.6;background:var(--bg);border-radius:12px;padding:10px 12px;margin:0}
+.spin{width:22px;height:22px;border:3px solid var(--line);border-top-color:var(--both);border-radius:50%;animation:s .8s linear infinite;margin:auto}
+@keyframes s{to{transform:rotate(1turn)}}
+@media (prefers-reduced-motion:reduce){.spin{animation-duration:3s}}
+.toast{position:fixed;left:50%;bottom:calc(84px + var(--sab));transform:translateX(-50%);background:var(--fg);color:var(--surface);padding:10px 16px;border-radius:12px;font-size:14px;max-width:calc(100% - 32px);text-align:center;z-index:5}
+
+.card{border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.card>b{font-size:15px}
+.code{font-family:var(--display);font-size:34px;letter-spacing:.18em;text-align:center}
+.status{display:flex;align-items:center;gap:10px}
+.status .av{width:40px;height:40px;font-size:15px;margin:0;border:0}
+.links{display:flex;gap:16px;justify-content:center;font-size:13px}
+.big{font-family:var(--display);font-size:40px;text-align:center;color:var(--you);line-height:1}
+</style>
+
+<div class="app">
+  <section id="login" aria-label="로그인">
+    <div class="brand">
+      <div class="mark"><span class="av me">나</span><span class="av you">너</span></div>
+      <h1>우리 캘린더</h1>
+      <p>일정표 사진 한 장이면<br>둘의 일정이 한 달력에 모여요.</p>
+    </div>
+    <div class="sso">
+      <button class="apple" data-login="apple"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 1.43c0 1.14-.5 2.27-1.18 3.08-.74.9-1.99 1.57-2.99 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.57-2.27 1.21-2.98.8-.94 2.14-1.64 3.25-1.68.03.13.05.28.05.43zm4.56 15.71c-.03.07-.46 1.58-1.52 3.12-.94 1.34-1.94 2.71-3.43 2.71-1.52 0-1.9-.88-3.63-.88-1.7 0-2.3.91-3.67.91-1.38 0-2.33-1.26-3.43-2.8C4.04 18.38 3 15.57 3 12.92c0-4.28 2.8-6.55 5.55-6.55 1.45 0 2.68.95 3.6.95.87 0 2.22-1.01 3.9-1.01.62 0 2.89.06 4.38 2.19-.13.09-2.39 1.37-2.39 4.19 0 3.26 2.86 4.42 2.96 4.45z"/></svg>Apple로 계속하기</button>
+      <button class="kakao" data-login="kakao"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#000" d="M12 3C6.48 3 2 6.48 2 10.8c0 2.78 1.86 5.22 4.66 6.6l-.95 3.48c-.08.3.26.54.52.37l4.13-2.74c.54.06 1.08.09 1.64.09 5.52 0 10-3.48 10-7.8S17.52 3 12 3z"/></svg>카카오로 계속하기</button>
+      <button class="google" data-login="google"><svg viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.91c1.7-1.57 2.69-3.87 2.69-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.26c-.81.54-1.84.86-3.05.86-2.34 0-4.33-1.58-5.04-3.71H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.96 10.71A5.41 5.41 0 0 1 3.68 9c0-.59.1-1.17.28-1.71V4.96H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.04l3-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.58A9 9 0 0 0 .96 4.96l3 2.33C4.67 5.16 6.66 3.58 9 3.58z"/></svg>Google로 계속하기</button>
+    </div>
+    <p class="fine">계속하면 <a href="privacy.html" data-ext>개인정보처리방침</a>에 동의하는 것으로 봐요.</p>
+    <button class="demo" id="demo" hidden>설정 전이라 로그인이 꺼져 있어요 · 데모로 둘러보기</button>
+  </section>
+
+  <div id="shell" hidden>
+    <header>
+      <h1>우리 캘린더</h1>
+      <div class="pair"><span class="av me" id="avMe"></span><span class="av you" id="avYou"></span><span id="dplus"></span></div>
+    </header>
+    <main id="view"></main>
+    <nav>
+      <button data-tab="cal" aria-current="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>캘린더</button>
+      <button data-tab="up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>사진으로 추가</button>
+      <button data-tab="anniv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>기념일</button>
+      <button data-tab="set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>설정</button>
+    </nav>
+  </div>
+</div>
+
+<script src="vendor/capacitor.js"></script>
+<script src="vendor/supabase.js"></script>
+<script src="config.js"></script>
+<script>
+const C = window.APP_CONFIG;
+const configured = !C.SUPABASE_URL.includes("YOUR-");
+const native = Capacitor.isNativePlatform();
+const P = native ? { App: Capacitor.registerPlugin("App"), Browser: Capacitor.registerPlugin("Browser") } : {};
+const sb = configured ? supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY, {
+  auth: { flowType: "pkce", detectSessionInUrl: !native },
+}) : null;
+let user = null;   // 로그인한 사용자 (데모 모드면 {demo:true})
+const NAME = {me:"나", you:"상대방", both:"함께", anniv:"기념일"};
+
+/* ---------- 저장 ---------- */
+// ponytail: 이 기기 localStorage 한 키에 전부 저장. 커플 동기화는 load/save 두 함수를 Supabase로 바꾸면 됨.
+const KEY = "cc.v1";
+const DEF = { events:[], annivs:[], photos:{}, start:"", settings:{ wToday:true, wAnniv:true, wPhoto:true } };
+let db = load();
+function load(){ try{ const s = JSON.parse(localStorage.getItem(KEY) || "{}"); return {...DEF, ...s, settings:{...DEF.settings, ...s.settings}}; }catch{ return structuredClone(DEF); } }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch{ toast("저장 공간이 부족해요. 오래된 사진을 지워 주세요."); } }
+const uid = () => crypto.randomUUID?.() || String(Date.now() + Math.random());
+
+/* ---------- 날짜 ---------- */
+const pad = n => String(n).padStart(2,"0");
+const key = (y,m,d) => `${y}-${pad(m+1)}-${pad(d)}`;
+const toD = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); };
+const iso = dt => key(dt.getFullYear(), dt.getMonth(), dt.getDate());
+const days = (a,b) => Math.round((toD(b) - toD(a)) / 864e5);
+const addDays = (s,n) => { const t = toD(s); t.setDate(t.getDate()+n); return iso(t); };
+const kdate = s => `${+s.slice(5,7)}월 ${+s.slice(8,10)}일`;
+const dlabel = n => n===0 ? "D-Day" : n>0 ? `D-${n}` : `D+${-n}`;
+const TODAY = iso(new Date());
+let ym = [+TODAY.slice(0,4), +TODAY.slice(5,7)-1], sel = TODAY, filter = "all", tab = "cal";
+let adding = false, confirmDelete = false, up = {who:"me", img:null, state:"idle", rows:[]};
+
+// 사진 분석 결과 예시 (다음 단계: 이미지 → 비전 AI → 날짜/시간/제목 JSON)
+const SAMPLE_PARSE = {
+  me:[{d:addDays(TODAY,3),t:"10:00",title:"분기 보고"},{d:addDays(TODAY,5),t:"14:00",title:"교육"},{d:addDays(TODAY,12),t:"09:30",title:"외근"}],
+  you:[{d:addDays(TODAY,2),t:"13:00",title:"수업 보강"},{d:addDays(TODAY,6),t:"11:00",title:"미용실"},{d:addDays(TODAY,13),t:"18:00",title:"동창회"}],
+};
+
+const $ = s => document.querySelector(s);
+const visible = e => filter==="all" || e.who===filter || e.who==="both";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const byTime = (a,b) => a.t.localeCompare(b.t);
+
+/* ---------- 기념일 ---------- */
+// 등록한 기념일 + 시작일 기준 100일 단위·주년을 다음 날짜 순으로
+function upcoming(){
+  const list = db.annivs.map(a => {
+    let n = a.d;
+    if(a.yearly){ n = TODAY.slice(0,4) + a.d.slice(4); if(n < TODAY) n = (+TODAY.slice(0,4)+1) + a.d.slice(4); }
+    return {...a, next:n, dday:days(TODAY,n)};
+  });
+  if(db.start){
+    for(let k=100; k<=1000; k+=100){ const n = addDays(db.start, k-1); if(n >= TODAY) list.push({id:"auto"+k, name:`${k}일`, next:n, dday:days(TODAY,n), auto:true}); }
+    for(let y=1; y<=60; y++){ const n = (+db.start.slice(0,4)+y) + db.start.slice(4); if(n >= TODAY){ list.push({id:"autoy"+y, name:`${y}주년`, next:n, dday:days(TODAY,n), auto:true}); if(y>=3 && list.filter(x=>x.auto).length>=5) break; } }
+  }
+  return list.filter(a => a.dday >= 0).sort((a,b) => a.dday - b.dday);
+}
+const annivOn = d => upcoming().filter(a => a.next === d);
+
+/* ---------- 로그인 ---------- */
+async function login(provider){
+  if(!sb) return toast("로그인 설정이 아직 안 됐어요 (docs/config.js)");
+  const redirectTo = native ? C.NATIVE_REDIRECT : location.origin + location.pathname;
+  const { data, error } = await sb.auth.signInWithOAuth({ provider, options: { redirectTo, skipBrowserRedirect: native } });
+  if(error) return toast("로그인을 시작하지 못했어요. 잠시 후 다시 시도해 주세요.");
+  if(native) await P.Browser.open({ url: data.url });   // 시스템 브라우저로 (Google·Apple 정책)
+}
+if(native){
+  P.App.addListener("appUrlOpen", async ({ url }) => {
+    if(!url.startsWith(C.NATIVE_REDIRECT)) return;
+    const q = new URL(url).searchParams;
+    P.Browser.close().catch(()=>{});
+    if(q.get("code")){
+      const { error } = await sb.auth.exchangeCodeForSession(q.get("code"));
+      if(error) toast("로그인을 마치지 못했어요. 다시 시도해 주세요.");
+    } else if(q.get("error")) toast("로그인이 취소됐어요.");
+  });
+}
+function setUser(u){
+  user = u;
+  const m = u?.user_metadata || {};
+  NAME.me = u?.demo ? "민준" : (m.full_name || m.name || m.nickname || m.preferred_username || "나");
+  NAME.you = u?.demo ? "서연" : "상대방";
+  $("#login").hidden = !!u; $("#shell").hidden = !u;
+  if(u){ $("#avMe").textContent = NAME.me[0]; $("#avYou").textContent = NAME.you[0]; render(); }
+}
+async function logout(){ if(sb && !user.demo) await sb.auth.signOut({ scope:"local" }); tab="cal"; setUser(null); }
+async function deleteAccount(){
+  if(!user.demo){
+    const { error } = await sb.rpc("delete_my_account");   // supabase/schema.sql
+    if(error) return toast("탈퇴를 처리하지 못했어요. 네트워크를 확인하고 다시 시도해 주세요.");
+    await sb.auth.signOut({ scope:"local" }).catch(()=>{});
+  }
+  try{ localStorage.removeItem(KEY); }catch{}
+  db = structuredClone(DEF); confirmDelete = false; tab = "cal"; setUser(null); toast("탈퇴가 완료됐어요. 모든 데이터를 지웠어요.");
+}
+function openExt(href){ const url = new URL(href, C.SITE_URL).href; native ? P.Browser.open({ url }) : window.open(url, "_blank", "noopener"); }
+
+/* ---------- 사진 ---------- */
+// 오늘의 우리 사진은 긴 변 900px, JPEG 로 줄여서 저장 (localStorage 용량 대비)
+function shrink(file, max=900){
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => {
+      const s = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement("canvas"); c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(img.src); res(c.toDataURL("image/jpeg", .82));
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+/* ---------- 화면 ---------- */
+function widget(){
+  const s = db.settings; if(!s.wToday && !s.wAnniv && !s.wPhoto) return "";
+  const todays = db.events.filter(e => e.d===TODAY).sort(byTime), next = upcoming()[0], ph = s.wPhoto && db.photos[TODAY];
+  return `<section class="widget" aria-label="오늘 요약"><h2>오늘 · ${kdate(TODAY)}</h2>
+    ${ph ? `<img class="wph" src="${ph}" alt="오늘의 우리">` : ""}
+    ${s.wToday ? (todays.length ? todays.slice(0,3).map(e => `<div class="wrow"><i class="dot" style="background:var(--${e.who})"></i><time>${e.t}</time><span>${esc(e.title)}</span></div>`).join("") + (todays.length>3 ? `<div class="wrow muted">+${todays.length-3}개</div>` : "") : `<div class="wrow muted">오늘 일정이 없어요</div>`) : ""}
+    ${s.wAnniv ? `<div class="wrow">${next ? `<b>${dlabel(next.dday)}</b><span>${esc(next.name)}</span>` : `<span class="muted">기념일을 등록해 보세요</span>`}</div>` : ""}
+  </section>`;
+}
+
+function cal(){
+  const [y,m] = ym, first = new Date(y,m,1).getDay(), daysIn = new Date(y,m+1,0).getDate();
+  let cells = "";
+  for(let i=0;i<first;i++) cells += `<span class="day out"></span>`;
+  for(let d=1; d<=daysIn; d++){
+    const k = key(y,m,d), es = db.events.filter(e => e.d===k && visible(e));
+    const whos = [...new Set(es.map(e => e.who))]; if(annivOn(k).length) whos.push("anniv");
+    const free = !db.events.some(e => e.d===k);
+    cells += `<button class="day${k===sel?" sel":""}${k===TODAY?" today":""}${free?" free":""}" data-d="${k}" aria-label="${m+1}월 ${d}일 일정 ${es.length}개">
+      <span>${d}</span><span class="dots">${whos.map(w => `<i class="dot" style="background:var(--${w})"></i>`).join("")}</span>${db.photos[k] ? `<img class="pth" src="${db.photos[k]}" alt="">` : ""}</button>`;
+  }
+  const list = db.events.filter(e => e.d===sel && visible(e)).sort(byTime), an = annivOn(sel), ph = db.photos[sel];
+  $("#view").innerHTML = widget() + `
+    <div class="month"><button data-mv="-1" aria-label="이전 달">‹</button><b>${y}년 ${m+1}월</b><button data-mv="1" aria-label="다음 달">›</button></div>
+    <div class="chips">${[["all","모두"],["me",NAME.me],["you",NAME.you]].map(([v,l]) =>
+      `<button class="chip" data-f="${v}" aria-pressed="${filter===v}">${v!=="all"?`<i class="dot" style="background:var(--${v})"></i>`:""}${esc(l)}</button>`).join("")}</div>
+    <div class="grid">${"일월화수목금토".split("").map(w => `<span class="wd">${w}</span>`).join("")}${cells}</div>
+    <div class="legend"><span><i class="dot" style="background:var(--me)"></i>${esc(NAME.me)}</span><span><i class="dot" style="background:var(--you)"></i>${esc(NAME.you)}</span><span><i class="dot" style="background:var(--both)"></i>함께</span><span><i class="dot" style="background:var(--anniv)"></i>기념일</span><span><i class="fb"></i>둘 다 비는 날</span></div>
+    <div class="list"><h2>${kdate(sel)}${sel===TODAY?" · 오늘":""}<button class="small" id="addEv">+ 일정</button></h2>
+      ${adding ? `<form class="form" id="evForm">
+        <input type="text" id="evTitle" placeholder="무슨 일정인가요?" required maxlength="60" autocomplete="off">
+        <div class="row"><input type="time" id="evTime" value="09:00" required></div>
+        <div class="seg">${["me","you","both"].map(w => `<button type="button" data-evwho="${w}" aria-pressed="${evWho===w}">${esc(NAME[w])}</button>`).join("")}</div>
+        <div class="row"><button type="button" class="ghost" id="evCancel">취소</button><button type="submit" class="cta">저장</button></div></form>` : ""}
+      ${an.map(a => `<div class="ev anniv"><span class="dd">${dlabel(a.dday)}</span><span>${esc(a.name)}</span><span class="who anniv">기념일</span><span></span></div>`).join("")}
+      ${list.map(e => `<div class="ev ${e.who}"><time>${e.t}</time><span>${esc(e.title)}</span><span class="who ${e.who}">${esc(NAME[e.who])}</span><button class="x" data-del="${e.id}" aria-label="${esc(e.title)} 삭제">×</button></div>`).join("")}
+      ${!list.length && !an.length && !adding ? `<div class="empty">둘 다 일정이 없어요. 데이트 잡기 좋은 날이에요.</div>` : ""}
+    </div>
+    <div class="sec list"><h2>오늘의 우리</h2>
+      ${ph ? `<div class="photo"><img src="${ph}" alt="${kdate(sel)} 오늘의 우리 사진"><button class="x" id="phDel" aria-label="사진 삭제">×</button></div>`
+           : `<label class="filebtn" for="phFile">이 날의 사진 남기기<input type="file" id="phFile" accept="image/*"></label>`}
+    </div>`;
+}
+let evWho = "both";
+
+function upload(){
+  let body = "";
+  if(up.state==="idle") body = `<button class="cta" id="go" ${up.img?"":"disabled"}>일정 읽어오기</button>`;
+  if(up.state==="busy") body = `<div class="spin" role="status" aria-label="분석 중"></div><p class="note" style="text-align:center">사진에서 날짜와 일정을 찾고 있어요…</p>`;
+  if(up.state==="done") body = `
+    <p style="margin:0;font-weight:700">${up.rows.length}개 일정을 찾았어요. 추가할 것만 골라 주세요.</p>
+    <div class="parsed">${up.rows.map((r,i) => `<label><input type="checkbox" id="r${i}" checked><span>${esc(r.title)}<small>${kdate(r.d)} · ${r.t}</small></span></label>`).join("")}</div>
+    <button class="cta" id="add">${esc(NAME[up.who])} 캘린더에 추가</button>`;
+  $("#view").innerHTML = `
+    <div><p style="margin:0 0 8px;font-weight:700">누구의 일정인가요?</p>
+    <div class="seg" style="grid-template-columns:1fr 1fr">${["me","you"].map(w => `<button data-who="${w}" aria-pressed="${up.who===w}">${esc(NAME[w])}</button>`).join("")}</div></div>
+    <div class="drop">${up.img?`<img src="${up.img}" alt="올린 일정 사진">`:`<strong>일정표 사진 올리기</strong><span>근무표, 시간표, 다이어리, 캡처 화면 모두 가능</span>`}</div>
+    <div class="pick">
+      <label for="cam">사진 찍기<input type="file" id="cam" accept="image/*" capture="environment"></label>
+      <label for="file">앨범에서 고르기<input type="file" id="file" accept="image/*"></label>
+    </div>
+    ${up.img?"":`<button class="sample" id="sample">예시 사진으로 해보기</button>`}
+    ${body}
+    <p class="note">사진은 일정을 읽는 데만 쓰고 저장하지 않아요. 읽은 결과는 추가하기 전에 직접 확인할 수 있어요. (지금은 예시 결과가 나와요)</p>`;
+}
+
+function anniv(){
+  const upc = upcoming().slice(0,3), dp = db.start ? days(db.start, TODAY)+1 : 0;
+  $("#view").innerHTML = `
+    <div class="card"><b>우리가 시작한 날</b>
+      ${db.start ? `<div class="big">D+${dp}</div>` : ""}
+      <input type="date" id="start" value="${db.start}" max="${TODAY}" aria-label="시작한 날">
+      <small class="muted">100일, 200일, 1주년 같은 기념일은 여기서 자동으로 계산돼요.</small></div>
+    <div class="sec list"><h2>다가오는 기념일</h2>
+      ${upc.length ? upc.map(a => `<div class="ev anniv"><span class="dd">${dlabel(a.dday)}</span><span>${esc(a.name)}<small class="muted" style="display:block;font-size:12px">${kdate(a.next)}</small></span><span></span><span></span></div>`).join("") : `<div class="empty">아직 기념일이 없어요.</div>`}</div>
+    <form class="form" id="anForm"><b>기념일 추가</b>
+      <input type="text" id="anName" placeholder="예: 처음 만난 날, 생일" required maxlength="40" autocomplete="off">
+      <input type="date" id="anDate" required aria-label="날짜">
+      <label class="sw" style="padding:6px 0;border:0"><span>매년 반복</span><input type="checkbox" id="anYearly" checked></label>
+      <button type="submit" class="cta">추가</button></form>
+    <div class="sec list"><h2>등록한 기념일</h2>
+      ${db.annivs.length ? db.annivs.map(a => `<div class="ev anniv"><span class="dd">${a.yearly?"매년":""}</span><span>${esc(a.name)}<small class="muted" style="display:block;font-size:12px">${a.d}</small></span><span></span><button class="x" data-delan="${a.id}" aria-label="${esc(a.name)} 삭제">×</button></div>`).join("") : `<div class="empty">등록한 기념일이 없어요.</div>`}</div>`;
+}
+
+function settings(){
+  const m = user.user_metadata || {}, provider = user.demo ? "데모" : ({kakao:"카카오",google:"Google",apple:"Apple"}[user.app_metadata?.provider] || ""), s = db.settings;
+  const sw = (id,label,hint) => `<label class="sw" for="${id}"><span>${label}<small>${hint}</small></span><input type="checkbox" id="${id}" data-set="${id}" ${s[id]?"checked":""}></label>`;
+  $("#view").innerHTML = `
+    <div class="card"><b>위젯</b>
+      ${sw("wToday","오늘의 일정","오늘 두 사람의 일정")}
+      ${sw("wAnniv","기념일 D-day","가장 가까운 기념일")}
+      ${sw("wPhoto","오늘의 우리 사진","오늘 남긴 사진")}
+      <p class="note">캘린더 위의 오늘 카드에 바로 적용돼요. 휴대폰 홈 화면 위젯은 같은 설정을 따르며, 앱 출시 단계에서 추가돼요.</p></div>
+    <div class="card"><b>상대와 연결하기</b>
+      <p class="note">상대가 앱에서 아래 코드를 입력하면 두 캘린더가 하나로 합쳐져요. (연결 기능은 준비 중이에요)</p>
+      <div class="code" id="code">K7Q-24M</div><button class="cta" id="copy">코드 복사</button></div>
+    <div class="card"><b>내 계정</b>
+      <div class="status"><span class="av me">${esc(NAME.me[0])}</span><div><b>${esc(NAME.me)}</b><div class="muted" style="font-size:12px">${esc(provider)} 로그인${m.email?` · ${esc(m.email)}`:""}</div></div></div>
+      <button class="ghost" id="logout">로그아웃</button>
+      ${confirmDelete ? `
+        <p class="note">탈퇴하면 계정, 연결 정보, 일정, 기념일, 사진이 모두 바로 지워지고 되돌릴 수 없어요.</p>
+        <button class="danger solid" id="delYes">탈퇴하고 모든 데이터 지우기</button>
+        <button class="ghost" id="delNo">취소</button>`
+      : `<button class="danger" id="del">회원 탈퇴</button>`}
+    </div>
+    <div class="links"><a href="privacy.html" data-ext>개인정보처리방침</a><a href="delete-account.html" data-ext>계정 삭제 안내</a></div>`;
+}
+
+const render = () => { $("#dplus").textContent = db.start ? `D+${days(db.start,TODAY)+1}` : ""; ({cal, up:upload, anniv, set:settings})[tab](); };
+function toast(t){ const el=document.createElement("div"); el.className="toast"; el.setAttribute("role","status"); el.textContent=t; document.body.append(el); setTimeout(()=>el.remove(),2400); }
+function goTab(t){ tab=t; adding=false; confirmDelete=false; document.querySelectorAll("nav button").forEach(n => n.setAttribute("aria-current", n.dataset.tab===t)); render(); }
+
+document.addEventListener("click", e => {
+  const a = e.target.closest("a[data-ext]");
+  if(a){ e.preventDefault(); return openExt(a.getAttribute("href")); }
+  const b = e.target.closest("button"); if(!b) return;
+  if(b.dataset.login) login(b.dataset.login);
+  else if(b.id==="demo") setUser({demo:true});
+  else if(b.dataset.tab) goTab(b.dataset.tab);
+  else if(b.dataset.d){ sel=b.dataset.d; adding=false; cal(); }
+  else if(b.dataset.mv){ ym[1]+=+b.dataset.mv; if(ym[1]<0){ym[0]--;ym[1]=11} if(ym[1]>11){ym[0]++;ym[1]=0} cal(); }
+  else if(b.dataset.f){ filter=b.dataset.f; cal(); }
+  else if(b.id==="addEv"){ adding=!adding; cal(); if(adding) $("#evTitle").focus(); }
+  else if(b.id==="evCancel"){ adding=false; cal(); }
+  else if(b.dataset.evwho){ evWho=b.dataset.evwho; document.querySelectorAll("[data-evwho]").forEach(x => x.setAttribute("aria-pressed", x===b)); }
+  else if(b.dataset.del){ db.events = db.events.filter(x => x.id!==b.dataset.del); save(); cal(); toast("일정을 지웠어요"); }
+  else if(b.dataset.delan){ db.annivs = db.annivs.filter(x => x.id!==b.dataset.delan); save(); anniv(); toast("기념일을 지웠어요"); }
+  else if(b.id==="phDel"){ delete db.photos[sel]; save(); cal(); toast("사진을 지웠어요"); }
+  else if(b.dataset.who){ up={who:b.dataset.who,img:up.img,state:"idle",rows:[]}; upload(); }
+  else if(b.id==="sample"){ up.img=sampleImg(); upload(); }
+  else if(b.id==="go"){ up.state="busy"; upload(); setTimeout(() => { up.rows=SAMPLE_PARSE[up.who].map(r => ({...r})); up.state="done"; upload(); },1400); }
+  else if(b.id==="add"){
+    const picked = up.rows.filter((r,i) => $("#r"+i).checked);
+    db.events.push(...picked.map(r => ({...r, id:uid(), who:up.who}))); save();
+    toast(`${picked.length}개 일정을 추가했어요`); up={who:up.who,img:null,state:"idle",rows:[]};
+    if(picked[0]){ sel=picked[0].d; ym=[+sel.slice(0,4), +sel.slice(5,7)-1]; }
+    goTab("cal");
+  }
+  else if(b.id==="copy"){ navigator.clipboard?.writeText("K7Q-24M").then(() => toast("복사했어요"), () => getSelection().selectAllChildren($("#code"))); }
+  else if(b.id==="logout") logout();
+  else if(b.id==="del"){ confirmDelete=true; settings(); }
+  else if(b.id==="delNo"){ confirmDelete=false; settings(); }
+  else if(b.id==="delYes") deleteAccount();
+});
+document.addEventListener("submit", e => {
+  e.preventDefault();
+  if(e.target.id==="evForm"){
+    db.events.push({ id:uid(), d:sel, t:$("#evTime").value, title:$("#evTitle").value.trim(), who:evWho }); save();
+    adding=false; cal(); toast("일정을 추가했어요");
+  }
+  if(e.target.id==="anForm"){
+    db.annivs.push({ id:uid(), name:$("#anName").value.trim(), d:$("#anDate").value, yearly:$("#anYearly").checked }); save();
+    anniv(); toast("기념일을 추가했어요");
+  }
+});
+document.addEventListener("change", async e => {
+  const t = e.target;
+  if(["file","cam"].includes(t.id) && t.files[0]){ const r = new FileReader(); r.onload = () => { up.img=r.result; up.state="idle"; upload(); }; r.readAsDataURL(t.files[0]); }
+  else if(t.id==="phFile" && t.files[0]){ db.photos[sel] = await shrink(t.files[0]); save(); cal(); toast("오늘의 우리 사진을 남겼어요"); }
+  else if(t.id==="start"){ db.start = t.value; save(); render(); }
+  else if(t.dataset.set){ db.settings[t.dataset.set] = t.checked; save(); }
+});
+
+// 예시용 '일정표 사진'을 캔버스로 그림
+function sampleImg(){
+  const c=document.createElement("canvas"); c.width=600; c.height=380; const x=c.getContext("2d");
+  x.fillStyle="#fbfbf7"; x.fillRect(0,0,600,380); x.fillStyle="#222"; x.font="bold 26px sans-serif"; x.fillText(`${+TODAY.slice(5,7)}월 일정표`,24,44);
+  x.strokeStyle="#bbb"; x.font="20px sans-serif";
+  SAMPLE_PARSE[up.who].forEach((r,i) => { const yy=100+i*80; x.strokeRect(24,yy-34,552,60);
+    x.fillText(r.d.slice(5).replace("-","/"),40,yy+4); x.fillText(r.t,150,yy+4); x.fillText(r.title,260,yy+4); });
+  return c.toDataURL();
+}
+
+if(sb) sb.auth.onAuthStateChange((_ev, session) => setUser(session?.user ?? null));
+else { $("#demo").hidden = false; setUser(null); }
+</script>
