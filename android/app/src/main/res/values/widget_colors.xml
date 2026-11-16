@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="widget_bg">#FFFFFFFF</color>
+    <color name="widget_fg">#FF1D2433</color>
+    <color name="widget_accent">#FFD9900F</color>
+    <string name="widget_desc">오늘의 일정과 기념일 D-day</string>
+</resources>

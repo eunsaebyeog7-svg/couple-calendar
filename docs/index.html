@@ -43,13 +43,13 @@ h1{font-family:var(--display);font-weight:400;font-size:26px;margin:0}
 .av{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700}
 .av.me{background:var(--me)} .av.you{background:var(--you);margin-left:-10px;border:2px solid var(--surface)}
 main{flex:1;padding:8px 20px 20px;display:flex;flex-direction:column;gap:14px}
-nav{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);padding-bottom:var(--sab)}
+nav{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--line);padding-bottom:var(--sab)}
 nav button{background:none;border:0;padding:12px 0 14px;font:inherit;font-size:12px;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}
 nav button[aria-current="true"]{color:var(--fg);font-weight:700}
 nav svg{width:22px;height:22px}
 button:focus-visible,input:focus-visible,select:focus-visible,label:focus-within,a:focus-visible{outline:2px solid var(--both);outline-offset:2px}
 a{color:var(--both)}
-input[type=text],input[type=date],input[type=time]{font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0;width:100%}
+input[type=text],input[type=search],input[type=date],input[type=time],select{font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0;width:100%}
 input[type=checkbox]{accent-color:var(--both);width:20px;height:20px;margin:0}
 .muted{color:var(--muted)}
 
@@ -149,6 +149,35 @@ input[type=checkbox]{accent-color:var(--both);width:20px;height:20px;margin:0}
 .status .av{width:40px;height:40px;font-size:15px;margin:0;border:0}
 .links{display:flex;gap:16px;justify-content:center;font-size:13px}
 .big{font-family:var(--display);font-size:40px;text-align:center;color:var(--you);line-height:1}
+
+/* 커뮤니티 */
+textarea{font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-height:96px;resize:vertical}
+.post{border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.post p{margin:0;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.ph{display:flex;align-items:center;gap:8px;font-size:13px;min-width:0}
+.ph b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ph time{color:var(--muted);font-size:12px;margin-left:auto;flex:none}
+.ph .av{width:26px;height:26px;margin:0;border:0;flex:none}
+.av.o{background:var(--muted)}
+.tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;flex:none}
+.tag.daily{background:var(--me-soft);color:var(--me)} .tag.qna{background:var(--anniv-soft);color:var(--anniv)} .tag.talk{background:var(--both-soft);color:var(--both)}
+.pimg{width:100%;max-height:300px;object-fit:cover;border-radius:12px}
+.acts{display:flex;gap:6px;align-items:center}
+.small[aria-pressed="true"]{color:var(--you);border-color:var(--you)}
+.menu{display:flex;gap:4px;justify-content:flex-end;flex-wrap:wrap}
+.menu button{font-size:13px;padding:4px 8px}
+.cm{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:8px}
+.cmt{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:start;font-size:14px}
+.cmt b{font-size:12px;display:block} .cmt span{overflow-wrap:anywhere}
+.cmt .av{width:22px;height:22px;font-size:10px;margin:0;border:0}
+.cmt .x{font-size:12px;width:auto;text-decoration:underline}
+.rules{margin:0;padding-left:18px;line-height:1.8;font-size:14px}
+.ev.edit{cursor:pointer;text-align:left;font:inherit;color:inherit;border:0;width:100%}
+.ev small{display:block;font-size:12px;color:var(--muted)}
+.inline{display:flex;align-items:center;gap:8px;font-size:14px}
+.loading{flex:1;display:grid;place-items:center}
+#nick{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px;padding:calc(32px + var(--sat)) 28px calc(28px + var(--sab))}
+#nick h1{font-size:28px}
 </style>
 
 <div class="app">
@@ -163,8 +192,17 @@ input[type=checkbox]{accent-color:var(--both);width:20px;height:20px;margin:0}
       <button class="kakao" data-login="kakao"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#000" d="M12 3C6.48 3 2 6.48 2 10.8c0 2.78 1.86 5.22 4.66 6.6l-.95 3.48c-.08.3.26.54.52.37l4.13-2.74c.54.06 1.08.09 1.64.09 5.52 0 10-3.48 10-7.8S17.52 3 12 3z"/></svg>카카오로 계속하기</button>
       <button class="google" data-login="google"><svg viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.91c1.7-1.57 2.69-3.87 2.69-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.26c-.81.54-1.84.86-3.05.86-2.34 0-4.33-1.58-5.04-3.71H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.96 10.71A5.41 5.41 0 0 1 3.68 9c0-.59.1-1.17.28-1.71V4.96H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.04l3-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.58A9 9 0 0 0 .96 4.96l3 2.33C4.67 5.16 6.66 3.58 9 3.58z"/></svg>Google로 계속하기</button>
     </div>
-    <p class="fine">계속하면 <a href="privacy.html" data-ext>개인정보처리방침</a>에 동의하는 것으로 봐요.</p>
+    <p class="fine">계속하면 <a href="terms.html" data-ext>이용약관</a>과 <a href="privacy.html" data-ext>개인정보처리방침</a>에 동의하는 것으로 봐요.</p>
     <button class="demo" id="demo" hidden>설정 전이라 로그인이 꺼져 있어요 · 데모로 둘러보기</button>
+  </section>
+
+  <section id="nick" aria-label="닉네임 정하기" hidden>
+    <h1>반가워요!</h1>
+    <p class="muted" style="margin:0;line-height:1.6">상대방과 커뮤니티에 보일 닉네임을 정해 주세요.<br>실명 대신 별명을 쓰는 걸 추천해요.</p>
+    <form class="form" id="nickForm" style="border:0;padding:0">
+      <input type="text" id="nickIn" placeholder="2~12자" minlength="2" maxlength="12" required autocomplete="off" aria-label="닉네임">
+      <button type="submit" class="cta">시작하기</button>
+    </form>
   </section>
 
   <div id="shell" hidden>
@@ -177,6 +215,7 @@ input[type=checkbox]{accent-color:var(--both);width:20px;height:20px;margin:0}
       <button data-tab="cal" aria-current="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>캘린더</button>
       <button data-tab="up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>사진으로 추가</button>
       <button data-tab="anniv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>기념일</button>
+      <button data-tab="comm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 5h11a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H9l-4 3v-3H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M17 9h3a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-1v3l-4-3h-3"/></svg>커뮤니티</button>
       <button data-tab="set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>설정</button>
     </nav>
   </div>
@@ -185,25 +224,20 @@ input[type=checkbox]{accent-color:var(--both);width:20px;height:20px;margin:0}
 <script src="vendor/capacitor.js"></script>
 <script src="vendor/supabase.js"></script>
 <script src="config.js"></script>
+<script src="store.js"></script>
 <script>
 const C = window.APP_CONFIG;
 const configured = !C.SUPABASE_URL.includes("YOUR-");
-const native = Capacitor.isNativePlatform();
-const P = native ? { App: Capacitor.registerPlugin("App"), Browser: Capacitor.registerPlugin("Browser") } : {};
-const sb = configured ? supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY, {
-  auth: { flowType: "pkce", detectSessionInUrl: !native },
-}) : null;
-let user = null;   // 로그인한 사용자 (데모 모드면 {demo:true})
-const NAME = {me:"나", you:"상대방", both:"함께", anniv:"기념일"};
+const native = Capacitor.isNativePlatform(), android = Capacitor.getPlatform() === "android";
+const reg = n => Capacitor.registerPlugin(n);
+const P = native ? { App:reg("App"), Browser:reg("Browser"), Notes:reg("LocalNotifications"), Widget:reg("WidgetBridge") } : {};
+const sb = configured ? supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY, { auth:{ flowType:"pkce", detectSessionInUrl:!native } }) : null;
 
-/* ---------- 저장 ---------- */
-// ponytail: 이 기기 localStorage 한 키에 전부 저장. 커플 동기화는 load/save 두 함수를 Supabase로 바꾸면 됨.
-const KEY = "cc.v1";
-const DEF = { events:[], annivs:[], photos:{}, start:"", settings:{ wToday:true, wAnniv:true, wPhoto:true } };
-let db = load();
-function load(){ try{ const s = JSON.parse(localStorage.getItem(KEY) || "{}"); return {...DEF, ...s, settings:{...DEF.settings, ...s.settings}}; }catch{ return structuredClone(DEF); } }
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch{ toast("저장 공간이 부족해요. 오래된 사진을 지워 주세요."); } }
-const uid = () => crypto.randomUUID?.() || String(Date.now() + Math.random());
+let user = null, S = null;                       // S = 저장소 (store.js: makeLocal / makeCloud)
+const L = readLocal();                           // 이 기기 설정·데모 데이터 (cc.v1)
+const persist = () => { const ok = writeLocal(L); if(!ok) toast("저장 공간이 부족해요. 오래된 사진을 지워 주세요."); return ok; };
+let db = { events:[], annivs:[], photos:{}, start:"", couple:{}, me:{} };   // 화면에 보이는 데이터
+const NAME = {me:"나", you:"상대방", both:"함께", anniv:"기념일"};
 
 /* ---------- 날짜 ---------- */
 const pad = n => String(n).padStart(2,"0");
@@ -213,24 +247,41 @@ const iso = dt => key(dt.getFullYear(), dt.getMonth(), dt.getDate());
 const days = (a,b) => Math.round((toD(b) - toD(a)) / 864e5);
 const addDays = (s,n) => { const t = toD(s); t.setDate(t.getDate()+n); return iso(t); };
 const kdate = s => `${+s.slice(5,7)}월 ${+s.slice(8,10)}일`;
+const wday = s => "일월화수목금토"[toD(s).getDay()];
 const dlabel = n => n===0 ? "D-Day" : n>0 ? `D-${n}` : `D+${-n}`;
 const TODAY = iso(new Date());
 let ym = [+TODAY.slice(0,4), +TODAY.slice(5,7)-1], sel = TODAY, filter = "all", tab = "cal";
-let adding = false, confirmDelete = false, up = {who:"me", img:null, state:"idle", rows:[]};
+let form = null, confirmDelete = false, confirmLeave = false, up = {img:null, state:"idle", rows:[], sample:false};
 
-// 사진 분석 결과 예시 (다음 단계: 이미지 → 비전 AI → 날짜/시간/제목 JSON)
-const SAMPLE_PARSE = {
-  me:[{d:addDays(TODAY,3),t:"10:00",title:"분기 보고"},{d:addDays(TODAY,5),t:"14:00",title:"교육"},{d:addDays(TODAY,12),t:"09:30",title:"외근"}],
-  you:[{d:addDays(TODAY,2),t:"13:00",title:"수업 보강"},{d:addDays(TODAY,6),t:"11:00",title:"미용실"},{d:addDays(TODAY,13),t:"18:00",title:"동창회"}],
-};
+// 사진 분석 예시 (데모·서버 설정 전)
+const SAMPLE_PARSE = [{d:addDays(TODAY,3),t:"10:00",title:"분기 보고"},{d:addDays(TODAY,5),t:"",title:"야간 근무"},{d:addDays(TODAY,12),t:"09:30",title:"외근"}];
 
 const $ = s => document.querySelector(s);
 const visible = e => filter==="all" || e.who===filter || e.who==="both";
-const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const byTime = (a,b) => a.t.localeCompare(b.t);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const byTime = (a,b) => (a.t||"").localeCompare(b.t||"");
+const REP = {none:"반복 안 함", weekly:"매주", monthly:"매달", yearly:"매년"};
+
+/* ---------- 일정 반복·여러 날 ---------- */
+// 날짜 k 에 일정 e 가 걸리는지: 시작일(반복이면 각 반복 시작일)부터 기간(end_d-d)만큼
+function on(e, k){
+  if(k < e.d) return false;
+  const span = e.end_d ? days(e.d, e.end_d) : 0;
+  if(!e.rep || e.rep==="none") return k <= (e.end_d || e.d);
+  for(let o=0; o<=span; o++){
+    const s = addDays(k,-o); if(s < e.d) break;
+    if(e.rep==="weekly" ? days(e.d,s)%7===0 : e.rep==="monthly" ? s.slice(8)===e.d.slice(8) : s.slice(5)===e.d.slice(5)) return true;
+  }
+  return false;
+}
+const eventsOn = (k, all) => db.events.filter(e => on(e,k) && (all || visible(e))).sort(byTime);
+// 다음 60일 안에서 둘 다 일정 없는 첫 주말
+function freeWeekend(){
+  for(let i=1;i<=60;i++){ const k = addDays(TODAY,i), w = toD(k).getDay(); if((w===0||w===6) && !eventsOn(k,true).length && !annivOn(k).length) return k; }
+  return null;
+}
 
 /* ---------- 기념일 ---------- */
-// 등록한 기념일 + 시작일 기준 100일 단위·주년을 다음 날짜 순으로
 function upcoming(){
   const list = db.annivs.map(a => {
     let n = a.d;
@@ -245,6 +296,34 @@ function upcoming(){
 }
 const annivOn = d => upcoming().filter(a => a.next === d);
 
+/* ---------- 공통 ---------- */
+const ERR = { code_not_found:"코드를 찾을 수 없어요. 다시 확인해 주세요.", own_code:"내 코드예요. 상대의 코드를 입력해 주세요.", couple_full:"이미 두 사람이 연결된 코드예요.", already_linked:"이미 연결돼 있어요. 다른 사람과 연결하려면 먼저 연결을 끊어 주세요.",
+  nickname_taken:"이미 쓰는 닉네임이에요.", needs_login:"로그인 설정 후 쓸 수 있어요.", full:"저장 공간이 부족해요. 오래된 사진을 지워 주세요.", not_linked:"연결된 상대가 없어요." };
+const errMsg = e => ERR[Object.keys(ERR).find(k => String(e?.message).includes(k))] || "처리하지 못했어요. 네트워크를 확인하고 다시 시도해 주세요.";
+async function act(fn, done){ try{ await fn(); if(done) toast(done); return true; }catch(e){ console.warn(e); toast(errMsg(e)); return false; } }
+// 스토어 UGC 규정: 부적절한 표현 거르기. ponytail: 단순 금칙어 목록, 서버 필터·관리자 검토로 키울 것.
+const BAD = ["씨발","시발","ㅅㅂ","병신","ㅂㅅ","개새끼","좆","fuck","shit"];
+const clean = s => !BAD.some(w => s.toLowerCase().replace(/\s/g,"").includes(w));
+function toast(t){ const el=document.createElement("div"); el.className="toast"; el.setAttribute("role","status"); el.textContent=t; document.body.append(el); setTimeout(()=>el.remove(),2600); }
+function shrink(file, max=900){
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => {
+      const s = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement("canvas"); c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(img.src); res(c.toDataURL("image/jpeg", .82));
+    };
+    img.onerror = () => rej(new Error("image"));
+    img.src = URL.createObjectURL(file);
+  });
+}
+function applyLook(){
+  const s = L.settings, r = document.documentElement;
+  s.theme==="system" ? r.removeAttribute("data-theme") : r.setAttribute("data-theme", s.theme);
+  r.style.zoom = s.zoom;
+}
+
 /* ---------- 로그인 ---------- */
 async function login(provider){
   if(!sb) return toast("로그인 설정이 아직 안 됐어요 (docs/config.js)");
@@ -258,70 +337,108 @@ if(native){
     if(!url.startsWith(C.NATIVE_REDIRECT)) return;
     const q = new URL(url).searchParams;
     P.Browser.close().catch(()=>{});
-    if(q.get("code")){
-      const { error } = await sb.auth.exchangeCodeForSession(q.get("code"));
-      if(error) toast("로그인을 마치지 못했어요. 다시 시도해 주세요.");
-    } else if(q.get("error")) toast("로그인이 취소됐어요.");
+    if(q.get("code")){ const { error } = await sb.auth.exchangeCodeForSession(q.get("code")); if(error) toast("로그인을 마치지 못했어요. 다시 시도해 주세요."); }
+    else if(q.get("error")) toast("로그인이 취소됐어요.");
   });
 }
-function setUser(u){
-  user = u;
-  const m = u?.user_metadata || {};
-  NAME.me = u?.demo ? "민준" : (m.full_name || m.name || m.nickname || m.preferred_username || "나");
-  NAME.you = u?.demo ? "서연" : "상대방";
-  $("#login").hidden = !!u; $("#shell").hidden = !u;
-  if(u){ $("#avMe").textContent = NAME.me[0]; $("#avYou").textContent = NAME.you[0]; render(); }
+function show(which){ $("#login").hidden = which!=="login"; $("#nick").hidden = which!=="nick"; $("#shell").hidden = which!=="shell"; }
+async function setUser(u){
+  S?.stop?.(); user = u; form = null; confirmDelete = confirmLeave = false;
+  if(!u){ S = null; show("login"); return; }
+  S = u.demo ? makeLocal(L, persist, true) : makeCloud(sb, u, () => refresh().catch(()=>{}));
+  if(u.demo) seedDemo();
+  show("shell"); $("#view").innerHTML = `<div class="loading"><div class="spin" role="status" aria-label="불러오는 중"></div></div>`;
+  if(!await act(refresh)) return;
+  if(!db.me.nickname){ show("nick"); $("#nickIn").focus(); }
+}
+async function refresh(){
+  Object.assign(db, await S.load());
+  NAME.me = db.me.nickname || "나"; NAME.you = db.couple.partner || "상대방";
+  $("#avMe").textContent = NAME.me[0]; $("#avYou").textContent = NAME.you[0]; $("#avYou").hidden = !db.couple.linked;
+  render(); background();
+}
+function seedDemo(){
+  if(L.demoSeeded) return;
+  L.events.push({id:newId(), d:addDays(TODAY,2), t:"13:00", title:"수업 보강", who:"you"}, {id:newId(), d:addDays(TODAY,6), t:"", title:"가족 모임", who:"you"},
+                {id:newId(), d:addDays(TODAY,9), t:"19:00", title:"저녁 데이트", who:"both"});
+  L.demoSeeded = true; persist();
 }
 async function logout(){ if(sb && !user.demo) await sb.auth.signOut({ scope:"local" }); tab="cal"; setUser(null); }
 async function deleteAccount(){
-  if(!user.demo){
-    const { error } = await sb.rpc("delete_my_account");   // supabase/schema.sql
-    if(error) return toast("탈퇴를 처리하지 못했어요. 네트워크를 확인하고 다시 시도해 주세요.");
-    await sb.auth.signOut({ scope:"local" }).catch(()=>{});
-  }
-  try{ localStorage.removeItem(KEY); }catch{}
-  db = structuredClone(DEF); confirmDelete = false; tab = "cal"; setUser(null); toast("탈퇴가 완료됐어요. 모든 데이터를 지웠어요.");
+  const ok = await act(async () => { await S.deleteAccount(); if(!user.demo) await sb.auth.signOut({ scope:"local" }).catch(()=>{}); });
+  if(!ok) return;
+  try{ localStorage.removeItem(LKEY); }catch{}
+  delete L.demoSeeded; Object.assign(L, structuredClone(LDEF)); applyLook(); tab = "cal"; setUser(null); toast("탈퇴가 완료됐어요. 모든 데이터를 지웠어요.");
 }
 function openExt(href){ const url = new URL(href, C.SITE_URL).href; native ? P.Browser.open({ url }) : window.open(url, "_blank", "noopener"); }
 
-/* ---------- 사진 ---------- */
-// 오늘의 우리 사진은 긴 변 900px, JPEG 로 줄여서 저장 (localStorage 용량 대비)
-function shrink(file, max=900){
-  return new Promise(res => {
-    const img = new Image();
-    img.onload = () => {
-      const s = Math.min(1, max / Math.max(img.width, img.height));
-      const c = document.createElement("canvas"); c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
-      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
-      URL.revokeObjectURL(img.src); res(c.toDataURL("image/jpeg", .82));
-    };
-    img.src = URL.createObjectURL(file);
-  });
+/* ---------- 알림 · 홈 화면 위젯 (휴대폰 앱에서만) ---------- */
+let bgTimer;
+function background(){ clearTimeout(bgTimer); bgTimer = setTimeout(() => { scheduleNotes(); pushWidget(); }, 500); }
+async function scheduleNotes(){
+  if(!native) return;
+  const s = L.settings, N = P.Notes;
+  try{
+    const { notifications:pend } = await N.getPending();
+    if(pend.length) await N.cancel({ notifications: pend.map(n => ({ id:n.id })) });
+    const list = [], now = new Date();
+    if(s.nAnniv) upcoming().filter(a => a.dday >= 1).slice(0,20).forEach((a,i) => {
+      const at = toD(addDays(a.next,-1)); at.setHours(9);
+      if(at > now) list.push({ id:1+i, title:"내일은 기념일이에요", body:`${kdate(a.next)} · ${a.name}`, schedule:{ at, allowWhileIdle:true } });
+    });
+    if(s.nDaily) for(let i=0;i<7;i++){
+      const k = addDays(TODAY,i), es = eventsOn(k,true), at = toD(k); at.setHours(8);
+      if(es.length && at > now) list.push({ id:100+i, title:`${kdate(k)} 우리 일정`, body: es.map(e => `${e.t||"종일"} ${e.title}`).join(" · ").slice(0,140), schedule:{ at, allowWhileIdle:true } });
+    }
+    if(list.length) await N.schedule({ notifications:list });
+  }catch(e){ console.warn("notifications", e); }
+}
+function pushWidget(){
+  if(!android) return;
+  const s = L.settings, next = upcoming()[0];
+  P.Widget.update({ data: JSON.stringify({
+    date: TODAY, title: `오늘 · ${kdate(TODAY)}`,
+    today: s.wToday ? eventsOn(TODAY,true).slice(0,4).map(e => `${e.t||"종일"}  ${e.title}`) : null,
+    anniv: s.wAnniv && next ? `${dlabel(next.dday)} ${next.name}` : "",
+  }) }).catch(e => console.warn("widget", e));
 }
 
-/* ---------- 화면 ---------- */
+/* ---------- 화면: 캘린더 ---------- */
 function widget(){
-  const s = db.settings; if(!s.wToday && !s.wAnniv && !s.wPhoto) return "";
-  const todays = db.events.filter(e => e.d===TODAY).sort(byTime), next = upcoming()[0], ph = s.wPhoto && db.photos[TODAY];
+  const s = L.settings; if(!s.wToday && !s.wAnniv && !s.wPhoto) return "";
+  const todays = eventsOn(TODAY,true), next = upcoming()[0], ph = s.wPhoto && db.photos[TODAY], fw = s.wToday && freeWeekend();
   return `<section class="widget" aria-label="오늘 요약"><h2>오늘 · ${kdate(TODAY)}</h2>
     ${ph ? `<img class="wph" src="${ph}" alt="오늘의 우리">` : ""}
-    ${s.wToday ? (todays.length ? todays.slice(0,3).map(e => `<div class="wrow"><i class="dot" style="background:var(--${e.who})"></i><time>${e.t}</time><span>${esc(e.title)}</span></div>`).join("") + (todays.length>3 ? `<div class="wrow muted">+${todays.length-3}개</div>` : "") : `<div class="wrow muted">오늘 일정이 없어요</div>`) : ""}
+    ${s.wToday ? (todays.length ? todays.slice(0,3).map(e => `<div class="wrow"><i class="dot" style="background:var(--${e.who})"></i><time>${e.t||"종일"}</time><span>${esc(e.title)}</span></div>`).join("") + (todays.length>3 ? `<div class="wrow muted">+${todays.length-3}개</div>` : "") : `<div class="wrow muted">오늘 일정이 없어요</div>`) : ""}
     ${s.wAnniv ? `<div class="wrow">${next ? `<b>${dlabel(next.dday)}</b><span>${esc(next.name)}</span>` : `<span class="muted">기념일을 등록해 보세요</span>`}</div>` : ""}
+    ${fw ? `<div class="wrow"><span>💡 ${kdate(fw)}(${wday(fw)})은 둘 다 비어요. 데이트 어때요?</span></div>` : ""}
   </section>`;
 }
-
+function evForm(){
+  const f = form;
+  return `<form class="form" id="evForm">
+    <input type="text" id="evTitle" placeholder="무슨 일정인가요?" required maxlength="60" autocomplete="off" value="${esc(f.title)}">
+    <div class="row"><input type="time" id="evTime" value="${f.t || "09:00"}" ${f.allDay?"disabled":""} aria-label="시간">
+      <label class="inline"><input type="checkbox" id="evAllDay" ${f.allDay?"checked":""}>하루 종일</label></div>
+    <div class="row"><label class="inline" style="flex:none">끝나는 날</label><input type="date" id="evEnd" value="${f.end_d||""}" min="${f.d}" aria-label="끝나는 날 (여러 날 일정)"></div>
+    <select id="evRep" aria-label="반복">${Object.entries(REP).map(([v,l]) => `<option value="${v}" ${f.rep===v?"selected":""}>${l}</option>`).join("")}</select>
+    <div class="seg" style="grid-template-columns:1fr 1fr">${[[false,NAME.me],[true,"함께"]].map(([v,l]) => `<button type="button" data-shared="${v}" aria-pressed="${f.shared===v}">${esc(l)}</button>`).join("")}</div>
+    ${f.id && f.rep!=="none" ? `<p class="note">반복 일정은 모든 날짜에 함께 바뀌어요.</p>` : ""}
+    <div class="row"><button type="button" class="ghost" id="evCancel">취소</button>${f.id ? `<button type="button" class="ghost" id="evDel" style="color:var(--danger)">삭제</button>` : ""}<button type="submit" class="cta">저장</button></div></form>`;
+}
 function cal(){
   const [y,m] = ym, first = new Date(y,m,1).getDay(), daysIn = new Date(y,m+1,0).getDate();
   let cells = "";
   for(let i=0;i<first;i++) cells += `<span class="day out"></span>`;
   for(let d=1; d<=daysIn; d++){
-    const k = key(y,m,d), es = db.events.filter(e => e.d===k && visible(e));
+    const k = key(y,m,d), es = eventsOn(k);
     const whos = [...new Set(es.map(e => e.who))]; if(annivOn(k).length) whos.push("anniv");
-    const free = !db.events.some(e => e.d===k);
+    const free = !eventsOn(k,true).length;
     cells += `<button class="day${k===sel?" sel":""}${k===TODAY?" today":""}${free?" free":""}" data-d="${k}" aria-label="${m+1}월 ${d}일 일정 ${es.length}개">
       <span>${d}</span><span class="dots">${whos.map(w => `<i class="dot" style="background:var(--${w})"></i>`).join("")}</span>${db.photos[k] ? `<img class="pth" src="${db.photos[k]}" alt="">` : ""}</button>`;
   }
-  const list = db.events.filter(e => e.d===sel && visible(e)).sort(byTime), an = annivOn(sel), ph = db.photos[sel];
+  const list = eventsOn(sel), an = annivOn(sel), ph = db.photos[sel];
+  const sub = e => [e.end_d ? `~${kdate(e.end_d)}` : "", e.rep && e.rep!=="none" ? REP[e.rep] : ""].filter(Boolean).join(" · ");
   $("#view").innerHTML = widget() + `
     <div class="month"><button data-mv="-1" aria-label="이전 달">‹</button><b>${y}년 ${m+1}월</b><button data-mv="1" aria-label="다음 달">›</button></div>
     <div class="chips">${[["all","모두"],["me",NAME.me],["you",NAME.you]].map(([v,l]) =>
@@ -329,43 +446,40 @@ function cal(){
     <div class="grid">${"일월화수목금토".split("").map(w => `<span class="wd">${w}</span>`).join("")}${cells}</div>
     <div class="legend"><span><i class="dot" style="background:var(--me)"></i>${esc(NAME.me)}</span><span><i class="dot" style="background:var(--you)"></i>${esc(NAME.you)}</span><span><i class="dot" style="background:var(--both)"></i>함께</span><span><i class="dot" style="background:var(--anniv)"></i>기념일</span><span><i class="fb"></i>둘 다 비는 날</span></div>
     <div class="list"><h2>${kdate(sel)}${sel===TODAY?" · 오늘":""}<button class="small" id="addEv">+ 일정</button></h2>
-      ${adding ? `<form class="form" id="evForm">
-        <input type="text" id="evTitle" placeholder="무슨 일정인가요?" required maxlength="60" autocomplete="off">
-        <div class="row"><input type="time" id="evTime" value="09:00" required></div>
-        <div class="seg">${["me","you","both"].map(w => `<button type="button" data-evwho="${w}" aria-pressed="${evWho===w}">${esc(NAME[w])}</button>`).join("")}</div>
-        <div class="row"><button type="button" class="ghost" id="evCancel">취소</button><button type="submit" class="cta">저장</button></div></form>` : ""}
+      ${form ? evForm() : ""}
       ${an.map(a => `<div class="ev anniv"><span class="dd">${dlabel(a.dday)}</span><span>${esc(a.name)}</span><span class="who anniv">기념일</span><span></span></div>`).join("")}
-      ${list.map(e => `<div class="ev ${e.who}"><time>${e.t}</time><span>${esc(e.title)}</span><span class="who ${e.who}">${esc(NAME[e.who])}</span><button class="x" data-del="${e.id}" aria-label="${esc(e.title)} 삭제">×</button></div>`).join("")}
-      ${!list.length && !an.length && !adding ? `<div class="empty">둘 다 일정이 없어요. 데이트 잡기 좋은 날이에요.</div>` : ""}
+      ${list.map(e => `<${e.mine?`button class="ev ${e.who} edit" data-edit="${e.id}" aria-label="${esc(e.title)} 수정"`:`div class="ev ${e.who}"`}><time>${e.t||"종일"}</time><span>${esc(e.title)}${sub(e)?`<small>${sub(e)}</small>`:""}</span><span class="who ${e.who}">${esc(NAME[e.who])}</span><span></span></${e.mine?"button":"div"}>`).join("")}
+      ${!list.length && !an.length && !form ? `<div class="empty">둘 다 일정이 없어요. 데이트 잡기 좋은 날이에요.</div>` : ""}
     </div>
     <div class="sec list"><h2>오늘의 우리</h2>
       ${ph ? `<div class="photo"><img src="${ph}" alt="${kdate(sel)} 오늘의 우리 사진"><button class="x" id="phDel" aria-label="사진 삭제">×</button></div>`
            : `<label class="filebtn" for="phFile">이 날의 사진 남기기<input type="file" id="phFile" accept="image/*"></label>`}
     </div>`;
 }
-let evWho = "both";
 
+/* ---------- 화면: 사진으로 추가 (내 일정만) ---------- */
 function upload(){
   let body = "";
   if(up.state==="idle") body = `<button class="cta" id="go" ${up.img?"":"disabled"}>일정 읽어오기</button>`;
   if(up.state==="busy") body = `<div class="spin" role="status" aria-label="분석 중"></div><p class="note" style="text-align:center">사진에서 날짜와 일정을 찾고 있어요…</p>`;
-  if(up.state==="done") body = `
+  if(up.state==="done") body = up.rows.length ? `
     <p style="margin:0;font-weight:700">${up.rows.length}개 일정을 찾았어요. 추가할 것만 골라 주세요.</p>
-    <div class="parsed">${up.rows.map((r,i) => `<label><input type="checkbox" id="r${i}" checked><span>${esc(r.title)}<small>${kdate(r.d)} · ${r.t}</small></span></label>`).join("")}</div>
-    <button class="cta" id="add">${esc(NAME[up.who])} 캘린더에 추가</button>`;
+    <div class="parsed">${up.rows.map((r,i) => `<label><input type="checkbox" id="r${i}" checked><span>${esc(r.title)}<small>${kdate(r.d)}${r.end_d?` ~ ${kdate(r.end_d)}`:""} · ${r.t||"하루 종일"}</small></span></label>`).join("")}</div>
+    <button class="cta" id="add">내 캘린더에 추가</button>`
+    : `<div class="empty">사진에서 일정을 찾지 못했어요. 더 밝고 반듯하게 찍어 다시 올려 주세요.</div><button class="ghost" id="retry">다른 사진 고르기</button>`;
   $("#view").innerHTML = `
-    <div><p style="margin:0 0 8px;font-weight:700">누구의 일정인가요?</p>
-    <div class="seg" style="grid-template-columns:1fr 1fr">${["me","you"].map(w => `<button data-who="${w}" aria-pressed="${up.who===w}">${esc(NAME[w])}</button>`).join("")}</div></div>
-    <div class="drop">${up.img?`<img src="${up.img}" alt="올린 일정 사진">`:`<strong>일정표 사진 올리기</strong><span>근무표, 시간표, 다이어리, 캡처 화면 모두 가능</span>`}</div>
+    <div class="status"><span class="av me">${esc(NAME.me[0])}</span><div><b>${esc(NAME.me)}님의 일정만 추가돼요</b><div class="muted" style="font-size:12px">${esc(NAME.you)}의 일정은 ${esc(NAME.you)}님이 자기 계정에서 올려요</div></div></div>
+    <div class="drop">${up.img?`<img src="${up.img}" alt="올린 일정 사진">`:`<strong>내 일정표 사진 올리기</strong><span>근무표, 시간표, 다이어리, 캡처 화면 모두 가능</span>`}</div>
     <div class="pick">
       <label for="cam">사진 찍기<input type="file" id="cam" accept="image/*" capture="environment"></label>
       <label for="file">앨범에서 고르기<input type="file" id="file" accept="image/*"></label>
     </div>
     ${up.img?"":`<button class="sample" id="sample">예시 사진으로 해보기</button>`}
     ${body}
-    <p class="note">사진은 일정을 읽는 데만 쓰고 저장하지 않아요. 읽은 결과는 추가하기 전에 직접 확인할 수 있어요. (지금은 예시 결과가 나와요)</p>`;
+    <p class="note">사진은 일정을 읽는 데만 쓰고 저장하지 않아요. 읽은 결과는 추가하기 전에 직접 확인할 수 있어요.${S.cloud ? " 사진 분석은 Anthropic의 AI(Claude)가 처리해요." : " (지금은 예시 결과가 나와요)"}</p>`;
 }
 
+/* ---------- 화면: 기념일 ---------- */
 function anniv(){
   const upc = upcoming().slice(0,3), dp = db.start ? days(db.start, TODAY)+1 : 0;
   $("#view").innerHTML = `
@@ -374,93 +488,259 @@ function anniv(){
       <input type="date" id="start" value="${db.start}" max="${TODAY}" aria-label="시작한 날">
       <small class="muted">100일, 200일, 1주년 같은 기념일은 여기서 자동으로 계산돼요.</small></div>
     <div class="sec list"><h2>다가오는 기념일</h2>
-      ${upc.length ? upc.map(a => `<div class="ev anniv"><span class="dd">${dlabel(a.dday)}</span><span>${esc(a.name)}<small class="muted" style="display:block;font-size:12px">${kdate(a.next)}</small></span><span></span><span></span></div>`).join("") : `<div class="empty">아직 기념일이 없어요.</div>`}</div>
+      ${upc.length ? upc.map(a => `<div class="ev anniv"><span class="dd">${dlabel(a.dday)}</span><span>${esc(a.name)}<small>${kdate(a.next)}</small></span><span></span><span></span></div>`).join("") : `<div class="empty">아직 기념일이 없어요.</div>`}</div>
     <form class="form" id="anForm"><b>기념일 추가</b>
       <input type="text" id="anName" placeholder="예: 처음 만난 날, 생일" required maxlength="40" autocomplete="off">
       <input type="date" id="anDate" required aria-label="날짜">
       <label class="sw" style="padding:6px 0;border:0"><span>매년 반복</span><input type="checkbox" id="anYearly" checked></label>
       <button type="submit" class="cta">추가</button></form>
     <div class="sec list"><h2>등록한 기념일</h2>
-      ${db.annivs.length ? db.annivs.map(a => `<div class="ev anniv"><span class="dd">${a.yearly?"매년":""}</span><span>${esc(a.name)}<small class="muted" style="display:block;font-size:12px">${a.d}</small></span><span></span><button class="x" data-delan="${a.id}" aria-label="${esc(a.name)} 삭제">×</button></div>`).join("") : `<div class="empty">등록한 기념일이 없어요.</div>`}</div>`;
+      ${db.annivs.length ? db.annivs.map(a => `<div class="ev anniv"><span class="dd">${a.yearly?"매년":""}</span><span>${esc(a.name)}<small>${a.d}</small></span><span></span><button class="x" data-delan="${a.id}" aria-label="${esc(a.name)} 삭제">×</button></div>`).join("") : `<div class="empty">등록한 기념일이 없어요.</div>`}</div>`;
 }
 
-function settings(){
-  const m = user.user_metadata || {}, provider = user.demo ? "데모" : ({kakao:"카카오",google:"Google",apple:"Apple"}[user.app_metadata?.provider] || ""), s = db.settings;
-  const sw = (id,label,hint) => `<label class="sw" for="${id}"><span>${label}<small>${hint}</small></span><input type="checkbox" id="${id}" data-set="${id}" ${s[id]?"checked":""}></label>`;
+/* ---------- 화면: 커뮤니티 ---------- */
+const CATS = {daily:"일상", qna:"질문", talk:"대화"};
+let feed = [], feedOpts = {cat:"", q:"", mine:false}, feedMore = false, feedLoaded = false;
+let writing = false, wr = {cat:"daily", text:"", img:null}, openPost = null, menuFor = null, editing = null;
+const ago = t => { const m = Math.floor((Date.now()-t)/6e4); return m<1?"방금":m<60?`${m}분 전`:m<1440?`${Math.floor(m/60)}시간 전`:`${Math.floor(m/1440)}일 전`; };
+function seedPosts(){
+  const h = 36e5, now = Date.now();
+  return [
+    {id:newId(), cat:"qna", author:"초보연애", text:"100일 선물 뭐가 좋을까요? 너무 부담스럽지 않은 걸로 추천 부탁드려요!", img:null, t:now-2*h, likes:3, liked:false,
+     comments:[{id:newId(), author:"곰돌이커플", text:"손편지랑 같이 찍은 사진 앨범 추천해요. 저희는 제일 기억에 남았어요.", t:now-h}]},
+    {id:newId(), cat:"daily", author:"하늘이네", text:"주말에 둘이 처음으로 캠핑 다녀왔어요 ⛺ 비 와서 텐트 안에서 라면만 먹었는데 그래도 좋았어요.", img:null, t:now-5*h, likes:12, liked:false, comments:[]},
+    {id:newId(), cat:"talk", author:"곰돌이커플", text:"다들 교대근무하는 연인이랑 일정 어떻게 맞추세요? 저희는 근무표 사진 올려서 둘 다 쉬는 날 찾아요.", img:null, t:now-26*h, likes:7, liked:false, comments:[]},
+  ];
+}
+async function loadFeed(append){
+  if(!S.cloud) L.posts ??= seedPosts();
+  const rows = await S.listPosts({ ...feedOpts, before: append ? feed.at(-1)?.t : undefined });
+  feed = append ? feed.concat(rows) : rows; feedMore = S.cloud && rows.length === 30; feedLoaded = true;
+  if(tab==="comm") community();
+}
+function community(){
+  if(!L.rules){
+    $("#view").innerHTML = `<div class="card"><b>커뮤니티 이용 규칙</b>
+      <ul class="rules"><li>욕설, 혐오, 성적인 내용, 괴롭힘은 올릴 수 없어요.</li><li>다른 사람의 개인정보나 사진을 허락 없이 올리지 마세요.</li><li>불편한 글은 <b>신고</b>하거나 쓴 사람을 <b>차단</b>할 수 있어요.</li><li>신고된 글은 24시간 안에 검토하고, 규칙을 어기면 글을 지우고 이용을 막아요.</li></ul>
+      <p class="note">커뮤니티에 올린 글과 사진은 이 앱을 쓰는 모든 사람이 볼 수 있어요. 자세한 내용은 <a href="terms.html" data-ext>이용약관</a>을 확인해 주세요.</p>
+      <button class="cta" id="agree">동의하고 시작하기</button></div>`;
+    return;
+  }
+  if(!feedLoaded){ $("#view").innerHTML = `<div class="loading"><div class="spin" role="status" aria-label="불러오는 중"></div></div>`; act(() => loadFeed()); return; }
+  const hidden = x => L.reported.includes(x.id);
+  const posts = feed.filter(p => !hidden(p));
+  const av = (a, mine) => `<span class="av ${mine?"me":"o"}">${esc(a[0])}</span>`;
   $("#view").innerHTML = `
+    <input type="search" id="q" placeholder="글 검색" value="${esc(feedOpts.q)}" aria-label="글 검색" autocomplete="off">
+    <div class="chips">${[["","전체"],...Object.entries(CATS)].map(([v,l]) => `<button class="chip" data-cf="${v||"all"}" aria-pressed="${feedOpts.cat===v && !feedOpts.mine}">${l}</button>`).join("")}
+      <button class="chip" id="mine" aria-pressed="${feedOpts.mine}">내 글</button>
+      <button class="small" id="write" style="margin-left:auto">+ 글쓰기</button></div>
+    ${writing ? `<form class="form" id="postForm">
+      <div class="seg">${Object.entries(CATS).map(([v,l]) => `<button type="button" data-pcat="${v}" aria-pressed="${wr.cat===v}">${l}</button>`).join("")}</div>
+      <textarea id="pText" maxlength="1000" required placeholder="${wr.cat==="qna"?"궁금한 걸 물어보세요":"오늘 있었던 일을 나눠 보세요"}">${esc(wr.text)}</textarea>
+      ${wr.img ? `<div class="photo"><img src="${wr.img}" alt="첨부한 사진"><button type="button" class="x" id="pImgDel" aria-label="사진 빼기">×</button></div>`
+               : `<label class="filebtn" for="pImg">사진 첨부<input type="file" id="pImg" accept="image/*"></label>`}
+      <div class="row"><button type="button" class="ghost" id="pCancel">취소</button><button type="submit" class="cta">올리기</button></div></form>` : ""}
+    ${posts.length ? posts.map(p => `<article class="post">
+      <div class="ph">${av(p.author, p.mine)}<b>${esc(p.author)}</b><span class="tag ${p.cat}">${CATS[p.cat]}</span><time>${ago(p.t)}</time><button class="x" data-menu="${p.id}" aria-label="더보기" aria-expanded="${menuFor===p.id}">⋯</button></div>
+      ${menuFor===p.id ? `<div class="menu">${p.mine ? `<button class="small" data-editpost="${p.id}">수정</button><button class="small" data-delpost="${p.id}">삭제</button>`
+        : `<button class="small" data-report="post:${p.id}">신고</button><button class="small" data-block="${esc(p.author_id)}" data-bname="${esc(p.author)}">이 사용자 차단</button>`}</div>` : ""}
+      ${editing===p.id ? `<form class="form" data-editform="${p.id}" style="padding:0;border:0"><textarea name="t" maxlength="1000" required>${esc(p.text)}</textarea>
+        <div class="row"><button type="button" class="ghost" id="editCancel">취소</button><button type="submit" class="cta">저장</button></div></form>` : `<p>${esc(p.text)}</p>`}
+      ${p.img ? `<img class="pimg" src="${p.img}" alt="${esc(p.author)}님이 올린 사진">` : ""}
+      <div class="acts"><button class="small" data-like="${p.id}" aria-pressed="${p.liked}">♥ ${p.likes}</button>
+        <button class="small" data-open="${p.id}" aria-expanded="${openPost===p.id}">${p.cat==="qna"?"답변":"댓글"} ${p.comments.filter(c => !hidden(c)).length}</button></div>
+      ${openPost===p.id ? `<div class="cm">
+        ${p.comments.filter(c => !hidden(c)).map(c => `<div class="cmt">${av(c.author, c.mine)}<span><b>${esc(c.author)} <small class="muted">${ago(c.t)}</small></b>${esc(c.text)}</span>
+          ${c.mine ? `<button class="x" data-delc="${p.id}:${c.id}">삭제</button>` : `<button class="x" data-report="comment:${c.id}">신고</button>`}</div>`).join("")}
+        <form class="row" data-cpost="${p.id}"><input type="text" name="c" maxlength="300" required autocomplete="off" placeholder="${p.cat==="qna"?"답변 남기기":"댓글 남기기"}" aria-label="댓글"><button type="submit" class="small" style="flex:none">등록</button></form>
+      </div>` : ""}
+    </article>`).join("") : `<div class="empty">${feedOpts.q || feedOpts.mine ? "찾는 글이 없어요." : "아직 글이 없어요. 첫 글을 남겨 보세요."}</div>`}
+    ${feedMore ? `<button class="ghost" id="more">더 보기</button>` : ""}`;
+}
+const findPost = id => feed.find(p => p.id===id);
+const reFeed = () => act(() => loadFeed());
+
+/* ---------- 화면: 설정 ---------- */
+let blockedList = null, nickEdit = false;
+function settings(){
+  const m = user.user_metadata || {}, provider = user.demo ? "데모" : ({kakao:"카카오",google:"Google",apple:"Apple"}[user.app_metadata?.provider] || ""), s = L.settings, c = db.couple;
+  const sw = (id,label,hint) => `<label class="sw" for="${id}"><span>${label}<small>${hint}</small></span><input type="checkbox" id="${id}" data-set="${id}" ${s[id]?"checked":""}></label>`;
+  const seg = (k, opts) => `<div class="seg" style="grid-template-columns:repeat(${opts.length},1fr)">${opts.map(([v,l]) => `<button data-look="${k}" data-v="${v}" aria-pressed="${String(s[k])===String(v)}">${l}</button>`).join("")}</div>`;
+  if(blockedList === null) S.blocked().then(r => { blockedList = r; if(tab==="set") settings(); }).catch(() => { blockedList = []; });
+  $("#view").innerHTML = `
+    <div class="card"><b>상대와 연결</b>
+      ${c.linked ? `<div class="status"><span class="av you">${esc(NAME.you[0])}</span><div><b>${esc(NAME.you)}님과 연결됐어요</b><div class="muted" style="font-size:12px">일정·기념일·사진을 함께 봐요</div></div></div>
+        ${confirmLeave ? `<p class="note">연결을 끊으면 내가 만든 '${esc(NAME.me)}' 일정만 가져가고, 함께 일정·기념일·사진은 ${esc(NAME.you)}님에게 남아요.</p>
+          <button class="danger solid" id="leaveYes">연결 끊기</button><button class="ghost" id="leaveNo">취소</button>` : `<button class="danger" id="leave">연결 끊기</button>`}`
+      : `<p class="note">상대에게 내 코드를 보내거나, 상대의 코드를 입력하면 두 캘린더가 하나로 합쳐져요.</p>
+        <div class="code" id="code">${esc(c.code)}</div><button class="ghost" id="copy">내 코드 복사</button>
+        <form class="row" id="joinForm"><input type="text" id="joinCode" placeholder="상대 코드 (예: A1B-2C3)" maxlength="7" required autocomplete="off" aria-label="상대 코드"><button class="cta" style="flex:none">연결</button></form>`}</div>
     <div class="card"><b>위젯</b>
-      ${sw("wToday","오늘의 일정","오늘 두 사람의 일정")}
+      ${sw("wToday","오늘의 일정","오늘 두 사람의 일정, 둘 다 비는 주말 추천")}
       ${sw("wAnniv","기념일 D-day","가장 가까운 기념일")}
       ${sw("wPhoto","오늘의 우리 사진","오늘 남긴 사진")}
-      <p class="note">캘린더 위의 오늘 카드에 바로 적용돼요. 휴대폰 홈 화면 위젯은 같은 설정을 따르며, 앱 출시 단계에서 추가돼요.</p></div>
-    <div class="card"><b>상대와 연결하기</b>
-      <p class="note">상대가 앱에서 아래 코드를 입력하면 두 캘린더가 하나로 합쳐져요. (연결 기능은 준비 중이에요)</p>
-      <div class="code" id="code">K7Q-24M</div><button class="cta" id="copy">코드 복사</button></div>
+      <p class="note">캘린더 위 오늘 카드와 안드로이드 홈 화면 위젯에 적용돼요. (아이폰 홈 화면 위젯은 준비 중이에요)</p></div>
+    <div class="card"><b>알림</b>
+      ${native ? sw("nAnniv","기념일 하루 전","오전 9시에 알려 줘요") + sw("nDaily","오늘의 일정","일정이 있는 날 오전 8시")
+               : `<p class="note">알림은 휴대폰 앱에서 켤 수 있어요.</p>`}</div>
+    <div class="card"><b>화면</b>
+      ${seg("theme", [["system","기기 설정"],["light","밝게"],["dark","어둡게"]])}
+      ${seg("zoom", [[1,"글자 보통"],[1.15,"크게"],[1.3,"아주 크게"]])}</div>
+    <div class="card"><b>커뮤니티 차단 목록</b>
+      ${blockedList === null ? `<div class="spin" role="status" aria-label="불러오는 중"></div>` : blockedList.length ? blockedList.map(b => `<div class="sw" style="cursor:default"><span>${esc(b.nickname)}</span><button class="small" data-unblock="${esc(b.id)}">차단 풀기</button></div>`).join("") : `<p class="note">차단한 사용자가 없어요.</p>`}</div>
     <div class="card"><b>내 계정</b>
       <div class="status"><span class="av me">${esc(NAME.me[0])}</span><div><b>${esc(NAME.me)}</b><div class="muted" style="font-size:12px">${esc(provider)} 로그인${m.email?` · ${esc(m.email)}`:""}</div></div></div>
+      ${nickEdit ? `<form class="row" id="nickForm2"><input type="text" id="nickIn2" value="${esc(db.me.nickname)}" minlength="2" maxlength="12" required aria-label="새 닉네임"><button class="cta" style="flex:none">저장</button></form>`
+                 : `<button class="ghost" id="nickEdit">닉네임 바꾸기</button>`}
       <button class="ghost" id="logout">로그아웃</button>
       ${confirmDelete ? `
-        <p class="note">탈퇴하면 계정, 연결 정보, 일정, 기념일, 사진이 모두 바로 지워지고 되돌릴 수 없어요.</p>
+        <p class="note">탈퇴하면 계정, 연결 정보, 내가 만든 일정, 사진, 커뮤니티 글과 댓글이 모두 바로 지워지고 되돌릴 수 없어요.</p>
         <button class="danger solid" id="delYes">탈퇴하고 모든 데이터 지우기</button>
         <button class="ghost" id="delNo">취소</button>`
       : `<button class="danger" id="del">회원 탈퇴</button>`}
     </div>
-    <div class="links"><a href="privacy.html" data-ext>개인정보처리방침</a><a href="delete-account.html" data-ext>계정 삭제 안내</a></div>`;
+    <div class="links"><a href="terms.html" data-ext>이용약관</a><a href="privacy.html" data-ext>개인정보처리방침</a><a href="delete-account.html" data-ext>계정 삭제 안내</a></div>`;
 }
 
-const render = () => { $("#dplus").textContent = db.start ? `D+${days(db.start,TODAY)+1}` : ""; ({cal, up:upload, anniv, set:settings})[tab](); };
-function toast(t){ const el=document.createElement("div"); el.className="toast"; el.setAttribute("role","status"); el.textContent=t; document.body.append(el); setTimeout(()=>el.remove(),2400); }
-function goTab(t){ tab=t; adding=false; confirmDelete=false; document.querySelectorAll("nav button").forEach(n => n.setAttribute("aria-current", n.dataset.tab===t)); render(); }
+const render = () => { if(!S) return; $("#dplus").textContent = db.start ? `D+${days(db.start,TODAY)+1}` : ""; ({cal, up:upload, anniv, comm:community, set:settings})[tab](); };
+function goTab(t){ tab=t; form=null; confirmDelete=confirmLeave=nickEdit=false; menuFor=editing=null; if(t==="set") blockedList=null; document.querySelectorAll("nav button").forEach(n => n.setAttribute("aria-current", n.dataset.tab===t)); render(); }
+const nickOk = n => { if(n.length<2) { toast("닉네임은 2자 이상이에요."); return false; } if(!clean(n)) { toast("쓸 수 없는 표현이 있어요."); return false; } return true; };
 
-document.addEventListener("click", e => {
+/* ---------- 이벤트 ---------- */
+document.addEventListener("click", async e => {
   const a = e.target.closest("a[data-ext]");
   if(a){ e.preventDefault(); return openExt(a.getAttribute("href")); }
   const b = e.target.closest("button"); if(!b) return;
-  if(b.dataset.login) login(b.dataset.login);
+  const d = b.dataset;
+  if(d.login) login(d.login);
   else if(b.id==="demo") setUser({demo:true});
-  else if(b.dataset.tab) goTab(b.dataset.tab);
-  else if(b.dataset.d){ sel=b.dataset.d; adding=false; cal(); }
-  else if(b.dataset.mv){ ym[1]+=+b.dataset.mv; if(ym[1]<0){ym[0]--;ym[1]=11} if(ym[1]>11){ym[0]++;ym[1]=0} cal(); }
-  else if(b.dataset.f){ filter=b.dataset.f; cal(); }
-  else if(b.id==="addEv"){ adding=!adding; cal(); if(adding) $("#evTitle").focus(); }
-  else if(b.id==="evCancel"){ adding=false; cal(); }
-  else if(b.dataset.evwho){ evWho=b.dataset.evwho; document.querySelectorAll("[data-evwho]").forEach(x => x.setAttribute("aria-pressed", x===b)); }
-  else if(b.dataset.del){ db.events = db.events.filter(x => x.id!==b.dataset.del); save(); cal(); toast("일정을 지웠어요"); }
-  else if(b.dataset.delan){ db.annivs = db.annivs.filter(x => x.id!==b.dataset.delan); save(); anniv(); toast("기념일을 지웠어요"); }
-  else if(b.id==="phDel"){ delete db.photos[sel]; save(); cal(); toast("사진을 지웠어요"); }
-  else if(b.dataset.who){ up={who:b.dataset.who,img:up.img,state:"idle",rows:[]}; upload(); }
-  else if(b.id==="sample"){ up.img=sampleImg(); upload(); }
-  else if(b.id==="go"){ up.state="busy"; upload(); setTimeout(() => { up.rows=SAMPLE_PARSE[up.who].map(r => ({...r})); up.state="done"; upload(); },1400); }
+  else if(d.tab) goTab(d.tab);
+  // 캘린더
+  else if(d.d){ sel=d.d; form=null; cal(); }
+  else if(d.mv){ ym[1]+=+d.mv; if(ym[1]<0){ym[0]--;ym[1]=11} if(ym[1]>11){ym[0]++;ym[1]=0} cal(); }
+  else if(d.f){ filter=d.f; cal(); }
+  else if(b.id==="addEv"){ form = form ? null : {d:sel, t:"09:00", title:"", end_d:"", rep:"none", shared:false, allDay:false}; cal(); form && $("#evTitle").focus(); }
+  else if(d.edit){ const x = db.events.find(v => v.id===d.edit); form = {...x, shared:x.who==="both", allDay:!x.t}; cal(); }
+  else if(b.id==="evCancel"){ form=null; cal(); }
+  else if(d.shared){ form.shared = d.shared==="true"; document.querySelectorAll("[data-shared]").forEach(x => x.setAttribute("aria-pressed", x===b)); }
+  else if(b.id==="evDel"){ const id=form.id; form=null; await act(async () => { await S.delEvent(id); await refresh(); }, "일정을 지웠어요"); }
+  else if(b.id==="phDel"){ await act(async () => { await S.delPhoto(sel); await refresh(); }, "사진을 지웠어요"); }
+  // 사진으로 추가
+  else if(b.id==="sample"){ up.img=sampleImg(); up.sample=true; upload(); }
+  else if(b.id==="retry"){ up={img:null,state:"idle",rows:[],sample:false}; upload(); }
+  else if(b.id==="go"){
+    up.state="busy"; upload();
+    try{
+      const rows = S.cloud ? await S.parse(up.img, TODAY) : null;
+      if(!rows) await new Promise(r => setTimeout(r, 1200));
+      up.rows = rows || SAMPLE_PARSE.map(r => ({...r})); up.state="done";
+    }catch(err){ console.warn(err); up.state="idle"; toast("사진을 읽지 못했어요. 잠시 후 다시 시도해 주세요."); }
+    if(tab==="up") upload();
+  }
   else if(b.id==="add"){
     const picked = up.rows.filter((r,i) => $("#r"+i).checked);
-    db.events.push(...picked.map(r => ({...r, id:uid(), who:up.who}))); save();
-    toast(`${picked.length}개 일정을 추가했어요`); up={who:up.who,img:null,state:"idle",rows:[]};
+    const ok = await act(async () => { for(const r of picked) await S.addEvent({ d:r.d, end_d:r.end_d||null, t:r.t||"", title:r.title, rep:"none", shared:false }); await refresh(); }, `${picked.length}개 일정을 추가했어요`);
+    if(!ok) return;
+    up={img:null,state:"idle",rows:[],sample:false};
     if(picked[0]){ sel=picked[0].d; ym=[+sel.slice(0,4), +sel.slice(5,7)-1]; }
     goTab("cal");
   }
-  else if(b.id==="copy"){ navigator.clipboard?.writeText("K7Q-24M").then(() => toast("복사했어요"), () => getSelection().selectAllChildren($("#code"))); }
+  // 기념일
+  else if(d.delan){ await act(async () => { await S.delAnniv(d.delan); await refresh(); }, "기념일을 지웠어요"); }
+  // 커뮤니티
+  else if(b.id==="agree"){ L.rules=true; persist(); community(); }
+  else if(d.cf){ feedOpts.cat = d.cf==="all" ? "" : d.cf; feedOpts.mine=false; reFeed(); }
+  else if(b.id==="mine"){ feedOpts.mine=!feedOpts.mine; feedOpts.cat=""; reFeed(); }
+  else if(b.id==="more"){ act(() => loadFeed(true)); }
+  else if(b.id==="write"){ writing=!writing; community(); if(writing) $("#pText").focus(); }
+  else if(d.pcat){ wr.cat=d.pcat; community(); }
+  else if(b.id==="pCancel"){ writing=false; wr={cat:"daily",text:"",img:null}; community(); }
+  else if(b.id==="pImgDel"){ wr.img=null; community(); }
+  else if(d.menu){ menuFor = menuFor===d.menu ? null : d.menu; community(); }
+  else if(d.editpost){ editing=d.editpost; menuFor=null; community(); }
+  else if(b.id==="editCancel"){ editing=null; community(); }
+  else if(d.delpost){ menuFor=null; await act(async () => { await S.delPost(d.delpost); await loadFeed(); }, "글을 지웠어요"); }
+  else if(d.report){ const [kind,id] = d.report.split(":"); menuFor=null; L.reported.push(id); persist(); community(); act(() => S.report(kind,id), "신고했어요. 24시간 안에 검토할게요."); }
+  else if(d.block){ menuFor=null; await act(async () => { await S.block(d.block); await loadFeed(); }, `${d.bname}님을 차단했어요. 글과 댓글이 더 보이지 않아요.`); }
+  else if(d.like){ const p=findPost(d.like); p.liked=!p.liked; p.likes+=p.liked?1:-1; community(); act(() => S.like(p.id, p.liked)); }
+  else if(d.open){ openPost = openPost===d.open ? null : d.open; community(); }
+  else if(d.delc){ const [pid,cid]=d.delc.split(":"); await act(async () => { await S.delComment(pid,cid); await loadFeed(); }); }
+  // 설정
+  else if(d.unblock){ await act(async () => { await S.unblock(d.unblock); blockedList = await S.blocked(); feedLoaded=false; settings(); }, "차단을 풀었어요"); }
+  else if(d.look){ L.settings[d.look] = d.look==="zoom" ? +d.v : d.v; persist(); applyLook(); settings(); }
+  else if(b.id==="copy"){ navigator.clipboard?.writeText(db.couple.code).then(() => toast("복사했어요. 상대에게 보내 주세요."), () => getSelection().selectAllChildren($("#code"))); }
+  else if(b.id==="leave"){ confirmLeave=true; settings(); }
+  else if(b.id==="leaveNo"){ confirmLeave=false; settings(); }
+  else if(b.id==="leaveYes"){ confirmLeave=false; await act(async () => { await S.leave(); await refresh(); }, "연결을 끊었어요"); }
+  else if(b.id==="nickEdit"){ nickEdit=true; settings(); $("#nickIn2").focus(); }
   else if(b.id==="logout") logout();
   else if(b.id==="del"){ confirmDelete=true; settings(); }
   else if(b.id==="delNo"){ confirmDelete=false; settings(); }
   else if(b.id==="delYes") deleteAccount();
 });
-document.addEventListener("submit", e => {
+document.addEventListener("submit", async e => {
   e.preventDefault();
-  if(e.target.id==="evForm"){
-    db.events.push({ id:uid(), d:sel, t:$("#evTime").value, title:$("#evTitle").value.trim(), who:evWho }); save();
-    adding=false; cal(); toast("일정을 추가했어요");
+  const f = e.target;
+  if(f.id==="evForm"){
+    const allDay = $("#evAllDay").checked, end = $("#evEnd").value;
+    const ev = { d:form.d, end_d: end && end > form.d ? end : null, t: allDay ? "" : $("#evTime").value, title:$("#evTitle").value.trim(), rep:$("#evRep").value, shared:form.shared };
+    if(!ev.title) return;
+    const id = form.id;
+    if(await act(async () => { id ? await S.updateEvent(id, ev) : await S.addEvent(ev); form=null; await refresh(); }, id ? "일정을 고쳤어요" : "일정을 추가했어요")) return;
   }
-  if(e.target.id==="anForm"){
-    db.annivs.push({ id:uid(), name:$("#anName").value.trim(), d:$("#anDate").value, yearly:$("#anYearly").checked }); save();
-    anniv(); toast("기념일을 추가했어요");
+  if(f.id==="anForm"){
+    const a = { name:$("#anName").value.trim(), d:$("#anDate").value, yearly:$("#anYearly").checked };
+    await act(async () => { await S.addAnniv(a); await refresh(); }, "기념일을 추가했어요");
   }
+  if(f.id==="nickForm" || f.id==="nickForm2"){
+    const n = (f.id==="nickForm" ? $("#nickIn") : $("#nickIn2")).value.trim();
+    if(!nickOk(n)) return;
+    if(await act(async () => { await S.setNickname(n); await refresh(); }, "닉네임을 정했어요")){ nickEdit=false; show("shell"); render(); }
+  }
+  if(f.id==="joinForm"){
+    const code = $("#joinCode").value.trim();
+    await act(async () => { await S.join(code); await refresh(); }, "연결됐어요! 이제 둘의 일정이 한 달력에 보여요.");
+  }
+  if(f.id==="postForm"){
+    const text = $("#pText").value.trim();
+    if(!text) return;
+    if(!clean(text)) return toast("규칙에 맞지 않는 표현이 있어요. 고쳐서 다시 올려 주세요.");
+    await act(async () => { await S.addPost({ cat:wr.cat, text, img:wr.img }); writing=false; wr={cat:"daily",text:"",img:null}; feedOpts={cat:"",q:"",mine:false}; await loadFeed(); }, "글을 올렸어요");
+  }
+  if(f.dataset.editform){
+    const text = f.t.value.trim();
+    if(!text) return;
+    if(!clean(text)) return toast("규칙에 맞지 않는 표현이 있어요. 고쳐서 다시 올려 주세요.");
+    await act(async () => { await S.editPost(f.dataset.editform, text); editing=null; await loadFeed(); }, "글을 고쳤어요");
+  }
+  if(f.dataset.cpost){
+    const text = f.c.value.trim();
+    if(!text) return;
+    if(!clean(text)) return toast("규칙에 맞지 않는 표현이 있어요. 고쳐서 다시 올려 주세요.");
+    await act(async () => { await S.addComment(f.dataset.cpost, text); await loadFeed(); });
+  }
+});
+let qTimer;
+document.addEventListener("input", e => {
+  if(e.target.id==="pText") wr.text = e.target.value;
+  if(e.target.id==="q"){ clearTimeout(qTimer); qTimer = setTimeout(() => { feedOpts.q = e.target.value.trim(); act(() => loadFeed()).then(() => { const q=$("#q"); if(q){ q.focus(); q.setSelectionRange(q.value.length,q.value.length); } }); }, 400); }
 });
 document.addEventListener("change", async e => {
   const t = e.target;
-  if(["file","cam"].includes(t.id) && t.files[0]){ const r = new FileReader(); r.onload = () => { up.img=r.result; up.state="idle"; upload(); }; r.readAsDataURL(t.files[0]); }
-  else if(t.id==="phFile" && t.files[0]){ db.photos[sel] = await shrink(t.files[0]); save(); cal(); toast("오늘의 우리 사진을 남겼어요"); }
-  else if(t.id==="start"){ db.start = t.value; save(); render(); }
-  else if(t.dataset.set){ db.settings[t.dataset.set] = t.checked; save(); }
+  if(["file","cam"].includes(t.id) && t.files[0]){ up.img = await shrink(t.files[0], 1600); up.state="idle"; up.sample=false; upload(); }
+  else if(t.id==="phFile" && t.files[0]){ const img = await shrink(t.files[0]); await act(async () => { await S.setPhoto(sel, img); await refresh(); }, "오늘의 우리 사진을 남겼어요"); }
+  else if(t.id==="pImg" && t.files[0]){ wr.img = await shrink(t.files[0]); community(); }
+  else if(t.id==="evAllDay"){ form.allDay = t.checked; $("#evTime").disabled = t.checked; }
+  else if(t.id==="start"){ const v = t.value; await act(async () => { await S.setStart(v); await refresh(); }); }
+  else if(t.dataset.set){
+    const k = t.dataset.set;
+    if(t.checked && (k==="nAnniv" || k==="nDaily")){
+      const r = await P.Notes.requestPermissions().catch(() => ({}));
+      if(r.display !== "granted"){ t.checked = false; return toast("휴대폰 설정에서 알림을 허용해 주세요."); }
+    }
+    L.settings[k] = t.checked; persist(); background();
+  }
 });
 
 // 예시용 '일정표 사진'을 캔버스로 그림
@@ -468,11 +748,20 @@ function sampleImg(){
   const c=document.createElement("canvas"); c.width=600; c.height=380; const x=c.getContext("2d");
   x.fillStyle="#fbfbf7"; x.fillRect(0,0,600,380); x.fillStyle="#222"; x.font="bold 26px sans-serif"; x.fillText(`${+TODAY.slice(5,7)}월 일정표`,24,44);
   x.strokeStyle="#bbb"; x.font="20px sans-serif";
-  SAMPLE_PARSE[up.who].forEach((r,i) => { const yy=100+i*80; x.strokeRect(24,yy-34,552,60);
-    x.fillText(r.d.slice(5).replace("-","/"),40,yy+4); x.fillText(r.t,150,yy+4); x.fillText(r.title,260,yy+4); });
-  return c.toDataURL();
+  SAMPLE_PARSE.forEach((r,i) => { const yy=100+i*80; x.strokeRect(24,yy-34,552,60);
+    x.fillText(r.d.slice(5).replace("-","/"),40,yy+4); x.fillText(r.t||"종일",150,yy+4); x.fillText(r.title,260,yy+4); });
+  return c.toDataURL("image/jpeg", .9);
 }
 
-if(sb) sb.auth.onAuthStateChange((_ev, session) => setUser(session?.user ?? null));
+applyLook();
+let authUid;
+if(sb) sb.auth.onAuthStateChange((ev, session) => {
+  // Apple 로그인 직후에만 오는 토큰을 저장해 두었다가 탈퇴할 때 철회 (앱스토어 5.1.1(v))
+  if(ev==="SIGNED_IN" && session?.provider_refresh_token && session.user.app_metadata?.provider==="apple")
+    sb.rpc("save_apple_token", { p_token: session.provider_refresh_token }).then(({error}) => error && console.warn(error));
+  // 같은 사람의 SIGNED_IN·INITIAL_SESSION 이 연달아 와도 한 번만 처리 (setUser 는 콜백 밖에서 실행: supabase-js 권장)
+  const uid = session?.user?.id ?? null;
+  if(uid !== authUid){ authUid = uid; setTimeout(() => setUser(session?.user ?? null)); }
+});
 else { $("#demo").hidden = false; setUser(null); }
 </script>
